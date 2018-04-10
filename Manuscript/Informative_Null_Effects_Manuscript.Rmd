@@ -417,6 +417,13 @@ A statistical evaluation of the observed data should allow for informative concl
 This implies that an informative study should be designed to allow for inferences about both presence *and absence* of a meaningful effect.
 Doing so would also, hopefully, prevent the common mistake to interpret a $p$-value larger than the alpha level (e.g., $p > .05$) as the absence of an effect.
 
+In the context of clinical trials, the repeated use of equivalence and non-inferiority tests can have negative effects on the conclusions derived from such research.
+That is, if sampling and measurement error are large and the equivalence region is rather wide, repeated studies comparing non-inferiority of different treatments or doses might favor treatments which are ineffective or even harmful [@Everson-Stewart2010;@Aberegg2018].
+A phenomenon that has been termed 'bio-creep'.
+The prevalence of bio-creep is a matter of ongoing research;
+@Beryl2011 come to the conclusion, that it is not a major cause of concern in practice (at least on average).
+Awareness of the issue is nevertheless important and should even more underline the need for conducting direct replication studies, meta-analyses and the use of adequate statistical tools.
+
 ## Possible Misconceptions
 
 Probability is not intuitive, and every statistical technique runs the risk of being misinterpreted.
