@@ -100,8 +100,8 @@ sd.true.placebo <- 15
 sd.true.treatmt <- 15
 
 # Parameters for BEST MCMC
-M.best.mcmc <- 1e5
-parallel.best.mcmc <- TRUE
+M.best.mcmc <- 1e2
+parallel.best.mcmc <- FALSE
 ```
 ```{r power_analysis, include=FALSE}
 n.group <- round(pwr.t.test(d = sesoi.d, sig.level = sig.level,
@@ -110,10 +110,10 @@ n.group <- round(pwr.t.test(d = sesoi.d, sig.level = sig.level,
 ```
 
 Imagine you want to investigate whether mindfulness meditation has an effect on lower back pain (LBP), which is an increasingly common problem among desk-working adults.
-In a fictional study patients with lower back pain are recruited and randomly assigned to either an eight week mindfulness meditation class (treatment group) or an eight week waiting list (control group). 
+In a fictional study patients with lower back pain are recruited and randomly assigned to either an eight week mindfulness meditation class (treatment group) or an eight week acupuncture therapy (active control group). 
 At the time of inclusion in the study and after the eight week study period self-reported lower back pain intensity is measured on a 100mm Visual Analogue Scale (VAS) [@AbdelShaheed2016; @Machado2015]. 
 The dependent variable to be analyzed is the difference between the VAS scores at the end and start of the study.
-The mean change over the eight week period between the treatment group and the waiting list group is examined using a two-sample $t$-test.^[The study design and analysis plan is simplified for illustrative purposes. 
+The mean change over the eight week period between the treatment group and the acupuncture group is examined using a two-sample $t$-test.^[The study design and analysis plan is simplified for illustrative purposes. 
 Practitioners might in reality consider a multilevel analysis to better account for different sources of variation [e.g. @Hayes2006]. The general recommendations in this paper apply also in more complex models.]
 
 The sample size of the study is determined based on an *a priori* power analysis.
@@ -132,12 +132,12 @@ group.2 <- group.2[group.2 >= -100 & group.2 <= 100]
 group.2 <- group.2[1:n.group]
 
 df <- data.frame(DV = c(group.1, group.2),
-                 Group = as.factor(c(rep("Waiting List", n.group),
+                 Group = as.factor(c(rep("Acupuncture", n.group),
                                      rep("Meditation", n.group))))
 write.csv(df, file = paste0(getwd(), '/../Example Data/Example_Data.csv'))
 ```
 
-```{r, data-plot, fig.cap="Plot for the data of the imaginary study. Each dot represents a single case. Box plot shows median and 25% and 75% quartiles. Y-axis is dependent variable, i.e. Pain Intensity after either 8 weeks of meditation class or after 8 weeks being on the waiting list."}
+```{r, data-plot, fig.cap="Plot for the data of the imaginary study. Each dot represents a single case. Box plot shows median and 25% and 75% quartiles. Y-axis is dependent variable, i.e. Pain Intensity after either 8 weeks of meditation class or after 8 weeks of acupuncture therapy."}
 ggplot(data = df, aes(x = Group, y = DV)) +
   #geom_violin(alpha = .3) +
   #geom_beeswarm(cex = 1.3, alpha = .2) +
@@ -148,7 +148,7 @@ ggplot(data = df, aes(x = Group, y = DV)) +
   theme_apa()
 ```
 
-The fictional measurements collected from `r n.group*2` participants are visualised in Figure~\ref{fig:data-plot}. The mean change in self-reported lower back pain intensity on the 100mm VAS over the eight week period (and standard deviations) are $`r mean(df[df$Group == "Meditation",]$DV)`$ ($`r sd(df[df$Group == "Meditation",]$DV)`$) in the Meditation group and $`r mean(df[df$Group == "Waiting List",]$DV)`$ ($`r sd(df[df$Group == "Waiting List",]$DV)`$) in the control group.
+The fictional measurements collected from `r n.group*2` participants are visualised in Figure \ref{fig:data-plot}. The mean change in self-reported lower back pain intensity on the 100mm VAS over the eight week period (and standard deviations) are $`r mean(df[df$Group == "Meditation",]$DV)`$ ($`r sd(df[df$Group == "Meditation",]$DV)`$) in the Meditation group and $`r mean(df[df$Group == "Acupuncture",]$DV)`$ ($`r sd(df[df$Group == "Acupuncture",]$DV)`$) in the control group.
 
 ```{r Perform tests, include=FALSE}
 ttest <- t.test(DV ~ Group, data = df, alternative = c("two.sided"))
@@ -206,18 +206,18 @@ If both one-sided tests are significant, we can reject the presence of a differe
 
 ```{r tost-plot, fig.width=7, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.cap="Visual representation of the equivalence test. Plotted is the confidence interval for the mean difference between the two groups. Bold interval is the 98% interval used for the two one-sided test along with the thin 99% interval used for the traditinal significance test against the null hypothesis of no difference. The equivalence test is significant, i.e. the 98% confidence interval lies well within the equivalence bounds of $-9$mm and $+9$mm and we can conclude that there is significant equivalence between the two groups."}
 tost <- TOSTtwo.raw(mean(df[df$Group == "Meditation",]$DV),
-                    mean(df[df$Group == "Waiting List",]$DV),
+                    mean(df[df$Group == "Acupuncture",]$DV),
                     sd(df[df$Group == "Meditation",]$DV),
-                    sd(df[df$Group == "Waiting List",]$DV),
+                    sd(df[df$Group == "Acupuncture",]$DV),
                     length(df[df$Group == "Meditation",]$DV),
-                    length(df[df$Group == "Meditation",]$DV),
+                    length(df[df$Group == "Acupuncture",]$DV),
                     -9, +9, sig.level,
                     var.equal = F, plot = T)
 ```
 
 @Lakens2017a created an R-package (TOSTER) and a spreadsheet to perform equivalence tests for $t$-tests, correlations, proportions, and meta-analyses. 
 Performing an equivalence test (again using Welch's $t$-test) on our fictional data, with an $\alpha$-level of `r sig.level`, yields a significant result ($t_1(`r ttest$parameter`) = `r tost$TOST_t1`$, $p < .001$; $t_2(`r ttest$parameter`) = `r tost$TOST_t2`$, $p < .001$). 
-The result is vizualized in Figure~\ref{fig:tost-plot}, where the `r (1-sig.level*2)*100`% confidence interval is plotted and compared to the equivalence bounds of $-9\mathrm{mm}$ and $+9\mathrm{mm}$.
+The result is vizualized in Figure \ref{fig:tost-plot}, where the `r (1-sig.level*2)*100`% confidence interval is plotted and compared to the equivalence bounds of $-9\mathrm{mm}$ and $+9\mathrm{mm}$.
 The width of the confidence interval is $1 - 2\alpha$ since two one-sided tests are performed, both of which need to be significant to conclude equivalence, [@Rogers1993].
 Using a Neyman-Pearson approach to statistical inferences, in which the goal is to make dichotomous decisions while controlling error rates at a desired level, we can *act* as if the difference between the two groups is smaller than the minimal clinically important difference of $\pm 9\mathrm{mm}$, without being wrong too often in the long run. 
 
@@ -262,7 +262,7 @@ For example, a 89% Highest Density Interval contains the values which, based on 
 ```{r rope-setup, include=FALSE}
 hdi.level <- .95
 best <- BESTmcmc(df[df$Group == "Meditation",]$DV,
-                 df[df$Group == "Waiting List",]$DV,
+                 df[df$Group == "Acupuncture",]$DV,
                  rnd.seed = 20180309, verbose = FALSE,
                  numSavedSteps = M.best.mcmc, parallel = parallel.best.mcmc)
 df.best <- data.frame(diff=(best$mu1-best$mu2))
@@ -271,13 +271,13 @@ hdi <- hdi(df.best$diff, credMass = hdi.level)
 posterior.mode <- summary(best)["muDiff","mode"]
 ```
 
-In our imaginary study where we compare an 8-week meditation class to patients on the waiting list we find a `r (hdi.level)*100`% Highest Density Interval (HDI) of $[`r hdi['lower']`; `r hdi['upper']`]$ for the difference in pain intensity between the two conditions.
+In our imaginary study where we compare an 8-week meditation class to patients receiving acupuncture we find a `r (hdi.level)*100`% Highest Density Interval (HDI) of $[`r hdi['lower']`; `r hdi['upper']`]$ for the difference in pain intensity between the two conditions.
 This means that the `r (hdi.level)*100`% most credible values for the difference in means, given our model, which incorporates both the prior information and the observed data, lie between `r hdi['lower']`mm and `r hdi['upper']`mm.^[Differences between the confidence interval reported above and the Bayesian HDI are to be expected.
 First, since we are using a `r hdi.level*100`% interval for the HDI and a `r (1-2*sig.level)*100`% confidence interval in the equivalence test, the HDI is expected to be narrower than the confidence interval.
 Generally, the prior affects the width and location of the HDI.
 If the priors that is used for the model is not uniform (as in the BEST model), differences between an HDI and a confidence interval are to be expected.
 With sufficient data, the data should outweigh the prior, but with smaller amounts of data, it can be advisable to explore the impact of different priors on the inference.] 
-Figure~\ref{fig:best-posterior-plot} visualizes this result.
+Figure \ref{fig:best-posterior-plot} visualizes this result.
 
 The posterior distribution can be used to answer several other questions as well.
 Besides the HDI, we can find the most credible value for the difference between the two groups, which would be the posterior mode, or *Maximum A Posteriori estimate* (MAP), which is `r posterior.mode` (and differs slighty from the frequentist estimate of the difference due to the prior).
@@ -343,7 +343,7 @@ There are different ways in which the alternative model can be specified.
 One way is to use researchers' beliefs or expectations of theoretical predictions.
 Another way would be to use data observed in previous studies to inform the alternative model [@Verhagen2014;@2016arXiv161109341H].
 
-Figure~\ref{fig:hypotheses-plot}(D) illustrates the two models compared when calculating a Bayes factor.
+Figure \ref{fig:hypotheses-plot}(D) illustrates the two models compared when calculating a Bayes factor.
 In the figure $M_0$ is represented by a point-null hypothesis and $M_1$ is represented by a distribution that assumes small effect sizes are more likely than large effect sizes, but which is not very restrictive and assigns probabilities to a wide range of possible values.
 
 A common criticism on Bayes factors is that they are much more sensitive to the specification of the prior than Bayesian model estimation. 
@@ -353,7 +353,7 @@ We would caution against the use of 'default' priors when calculating Bayes fact
 
 Bayes factors can be used to examine null effects by quantifying the relative evidence in the data for a null-model compared to an alternative model.
 In our calculation of a Bayes factor for our hypothetical data we wanted the prior for the alternative model to represent our expectation about the presence of a true effect.
-If our 8-week meditation class reduces pain intensity in a 100mm VAS scale compared to the waiting list condition, we expect it to be similar in size to other non-pharmaceutical interventions. 
+If our 8-week meditation class reduces pain intensity in a 100mm VAS scale compared to the active control condition, we expect it to be similar in size to other non-pharmaceutical interventions. 
 @Hoffman2007 performed a meta-analysis of different psychological interventions on pain intensity in patients with chronic lower back pain, and provided an estimated meta-analytical effect size of $d = 0.62$ (95% CI: $[0.25; 0.98]$) when comparing the effect of cognitive-behavioral therapy (CBT) against a waiting list condition.
 Therefore, we calculate a Bayes factor based on the expectation that a mindfulness meditation intervention might have similar effect size.
 
@@ -385,7 +385,7 @@ Stronger model evidence would be desirable, which means more data must be collec
 
 The difference between the result of Bayes factor analysis, the equivalence test, and the ROPE procedure reported earlier has several reasons.
 Most importantly, the questions that were asked differed across the tests.
-The equivalence test sought to reject an effect specified by and upper and lower equivalence bounds of $\pm 9\mathrm{mm}$ (see Figure~\ref{fig:hypotheses-plot}(B)), and the ROPE procedure examined wether the 95% HDI fell within the region of practical equivalence (Figure~\ref{fig:hypotheses-plot}(C)).
+The equivalence test sought to reject an effect specified by and upper and lower equivalence bounds of $\pm 9\mathrm{mm}$ (see Figure \ref{fig:hypotheses-plot}(B)), and the ROPE procedure examined wether the 95% HDI fell within the region of practical equivalence (Figure \ref{fig:hypotheses-plot}(C)).
 The Bayes factor investigated whether the data was more in line with a null model or amodel specified based on expectations derived from previous studies.
 Researchers need to be aware of the precise question they want to ask from the data and the method they use to do answer their question.
 In order to draw informative inferences from the data, it is crucial that a statistical test is selected in which alternative hypotheses are defined that answer a question of interest.

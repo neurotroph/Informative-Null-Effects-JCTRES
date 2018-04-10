@@ -36,3 +36,4 @@ vignettes/*.pdf
 /Manuscript/*.tex
 /Manuscript/*_files/*
 /Manuscript/Example_Data.csv
+/Preprint
