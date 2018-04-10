@@ -70,16 +70,18 @@ However, there are no statistical techniques that can unconditionally answer the
 As we will see below, statistical techniques that allow researchers to evaluate null results only allow conclusions about the null-hypothesis in relation to some specified alternative hypothesis.
 The null-hypothesis can not be statistically evaluated in complete isolation.
 Furthermore, it is impossible in empirical research to 'prove' a prediction, since theories and predictions are inherently probabilistic in an inductive empirical science.
-Rare events will happen, and thus the absence of an effect is always concluded based on a certain probability of making an error, or given a certain level of belief.
+Rare events will happen, and thus the absence of an effect is always concluded based on a certain probability of making an error, or given a certain level of certainty.
 The aim of the present article is to give an overview of statistical methods suited to investigate 'null effects', and explain how to translate the statistical results from these methods into valid conclusions about the prediction that is tested. 
 We provide a hypothetical example that is analyzed using four different methods, discuss how to interpretat the results (as well as possible misinterpretations), and briefly explain the inferential frameworks these different methods are based on. 
 
-# Investigating Null Effects
+# Investigating 'Null Effects'
 
 It is common practice in empirical research to rely almost exclusively on null-hypothesis significance testing (NHST) to investigate the presence of an effect.
 Because a null-hypothesis test can only reject the null (i.e. commonly the hypothesis of 'no effect'), it cannot be used to inform us about the absence of an effect.
 When we observe a non-significant effect (e.g., $p > \alpha$, where $\alpha$ is the level of significance chosen ahead of data-collection), all we can conclude is that, assuming the true effect size in the population is zero, the observed data was not sufficiently different from zero to reject the null hypothesis without in the long run being wrong more often than a desired error rate.
-This does not rule out the possibility that the true effect size in the population differs from zero. 
+This does not rule out the possibility that the true effect size in the population differs from zero.^[In fact, one can argue that it is most likely that the true effect size is unequal to zero.
+Except for very rare questions, an effect size of exactly zero (as assumed in the null hypothesis) is implausible [see 'crud factor', @Meehl1990].
+For hypothesis testing, however, it is a useful model for comparison.]
 The experiment might have had relatively low power to detect the true effect size, or -- equivalently -- a high probability of making a Type 2 error (not rejecting the null-hypothesis when a true effect is present in the population).
 Null-hypothesis significance testing answers a specific question (i.e., can we reject the null-hypothesis?). 
 When another question is of interest (i.e., can we conclude a meaningful effect is absent?), other statistical techniques should be used. 
