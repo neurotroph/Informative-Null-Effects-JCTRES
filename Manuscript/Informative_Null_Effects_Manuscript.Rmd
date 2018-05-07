@@ -79,9 +79,11 @@ We provide a hypothetical example that is analyzed using four different methods,
 It is common practice in empirical research to rely almost exclusively on null-hypothesis significance testing (NHST) to investigate the presence of an effect.
 Because a null-hypothesis test can only reject the null (i.e. commonly the hypothesis of 'no effect'), it cannot be used to inform us about the absence of an effect.
 When we observe a non-significant effect (e.g., $p > \alpha$, where $\alpha$ is the level of significance chosen ahead of data-collection), all we can conclude is that, assuming the true effect size in the population is zero, the observed data was not sufficiently different from zero to reject the null hypothesis without in the long run being wrong more often than a desired error rate.
-This does not rule out the possibility that the true effect size in the population differs from zero.^[In fact, one can argue that it is most likely that the true effect size is unequal to zero.
+This does not rule out the possibility that the true effect size in the population differs from zero.
+In fact, one can argue that it is most likely that the true effect size is unequal to zero.
 Except for very rare questions, an effect size of exactly zero (as assumed in the null hypothesis) is implausible [see 'crud factor', @Meehl1990].
-For hypothesis testing, however, it is a useful model for comparison.]
+For hypothesis testing, however, it is a useful model for comparison.
+
 The experiment might have had relatively low power to detect the true effect size, or -- equivalently -- a high probability of making a Type 2 error (not rejecting the null-hypothesis when a true effect is present in the population).
 Null-hypothesis significance testing answers a specific question (i.e., can we reject the null-hypothesis?). 
 When another question is of interest (i.e., can we conclude a meaningful effect is absent?), other statistical techniques should be used. 
@@ -115,8 +117,9 @@ Imagine you want to investigate whether mindfulness meditation has an effect on 
 In a fictional study patients with lower back pain are recruited and randomly assigned to either an eight week mindfulness meditation class (treatment group) or an eight week acupuncture therapy (active control group). 
 At the time of inclusion in the study and after the eight week study period self-reported lower back pain intensity is measured on a 100mm Visual Analogue Scale (VAS) [@AbdelShaheed2016; @Machado2015]. 
 The dependent variable to be analyzed is the difference between the VAS scores at the end and start of the study.
-The mean change over the eight week period between the treatment group and the acupuncture group is examined using a two-sample $t$-test.^[The study design and analysis plan is simplified for illustrative purposes. 
-Practitioners might in reality consider a multilevel analysis to better account for different sources of variation [e.g. @Hayes2006]. The general recommendations in this paper apply also in more complex models.]
+The mean change over the eight week period between the treatment group and the acupuncture group is examined using a two-sample $t$-test.^[The study design and analysis plan used herein is simplified for illustrative purposes. 
+Practitioners might in reality consider a multilevel analysis to better account for different sources of variation [e.g. @Hayes2006].
+The general recommendations in this paper apply also in more complex models.]
 
 The sample size of the study is determined based on an *a priori* power analysis.
 Based on a discussion with experts in the field, the smallest effect size of the treatment that is still deemed worthwhile is Cohen's $d = `r sesoi.d`$, and the study is designed to have a high probability of observing a statistically significant effect, if there is a true effect at least as large as this smallest effect size of interest.
@@ -198,8 +201,8 @@ This procedure is known as *equivalence testing* [@Rogers1993].
 For clinical scenarios in which pain intensity is measured using a 100mm VAS in patients with lower back pain, a difference of 9mm is considered to be a minimal clinically important difference, which is the difference of 9mm is when patients indicate that they subjectively feel 'slightly better' instead of 'equal' [@Wandel2010].
 Note that this is only one approach to determine a smallest effect size of interest, and other justifications for a smallest effect size of interest are possible [@lakens_scheel_isager_2018].
 Ideally, the SESOI should be informed by theory and previous research (such as meta-analyses or systematic reviews). 
-The SESOI should be determined before collecting the data (similar to decisions about the sample size, the alpha level, and the desired), and should be determined after looking at the collected data.
-An informative study should be designed such that it is well-powered to both detect *and reject* the smallest effect size of interest.
+The SESOI needs to be determined before collecting the data (similar to decisions about the sample size, the alpha level, and the desired statistical power).
+An informative study should be designed to have sufficient power both (i) to detect an effect that exceeds the SESOI and (ii) to demonstrate equivalence to zero or another specific value (thus rejecting the smallest effect size of interest).
 
 One way to test for equivalence is to perform the Two One-Sided Tests (TOST) procedure.
 A lower ($\Delta_{L}$) and upper ($\Delta_{U}$) equivalence bound is specified (e.g., a difference of -9mm or 9mm on a 100mm VAS). 
@@ -223,6 +226,10 @@ The result is vizualized in Figure \ref{fig:tost-plot}, where the `r (1-sig.leve
 The width of the confidence interval is $1 - 2\alpha$ since two one-sided tests are performed, both of which need to be significant to conclude equivalence, [@Rogers1993].
 Using a Neyman-Pearson approach to statistical inferences, in which the goal is to make dichotomous decisions while controlling error rates at a desired level, we can *act* as if the difference between the two groups is smaller than the minimal clinically important difference of $\pm 9\mathrm{mm}$, without being wrong too often in the long run. 
 
+The present example represents the case of a non-significant result that is equivalent to zero.
+It should be noted, that the equivalence testing approach also allows for significant *and* equivalent outcomes:
+If sample size increases and the estimated effect size is significantly different from zero, while also significantly smaller than an equivalence bound, both the traditional significance test as well as the equivalence test will be significant -- indicating a significant but equivalent result.
+
 Accessible introductions and explanations to equivalence testing are available [e.g. @Lakens2017a;@lakens_scheel_isager_2018;@Meyners2012] and can be performed in R, using a spreadsheet [@Lakens2017a], or using the free software jamovi.
 We provide scripts for R [@R-Base] and jamovi [@jamovi08] to reproduce the analyses and results in this paper as supplemental material.
 
@@ -238,23 +245,26 @@ A statistical model is a mathematical description of the probability of data.
 In Bayesian statistics a model consists of three different parts.
 The first part is called a *prior distribution*:
 For each parameter we choose a probability distribution that describes expectations about possible parameter values. 
-This prior can be understood as our 'belief' before seeing the data (hence the *prior*).^[This terminology already highlights the distinction between the frequentist and the Bayesian understanding of probability:
+This prior can be understood as our 'belief' before seeing the data (hence the *prior*).
+This terminology already highlights the distinction between the frequentist and the Bayesian understanding of probability:
 While frequentist consider 'probability' as a statement about long-term frequencies of events, Bayesians think of 'probability' as a 'degree of belief'.
 This subjective interpretation is easily explained -- and very intuitive to some -- but not without criticism.
 Even among Bayesians there is disagreement about the subjective nature of the prior.
-@Gelman2011 provides one accessible commentary on this debate.]
-We then take the observed data into account through a *likelihood function*,   and calculate a posterior distribution through the use of Bayes' theorem. In mathematical notation this is
+@Gelman2011 provides one accessible commentary on this debate.
+
+As the second part of a Bayesian model, we take the observed data into account through a *likelihood function*, and calculate a posterior distribution through the use of Bayes' theorem. In mathematical notation this is
 $$
   P(\theta | Data) = \frac{P(Data | \theta) \cdot \pi(\theta)}{P(Data)}
 $$
 where $\pi(\theta)$ is the prior distribution for our parameter $\theta$, and $P(Data | \theta)$ is the likelihood function of the model. $P(\theta | Data)$ is the *posterior distribution* of the parameter after seeing the data (i.e. the conditional probability of the parameter values given the observed data).
-The posterior distribution is thus -- analogous to the prior distribution -- our belief about different parameter values for $\theta$ *after* having seen the data.^[The term $P(Data)$ in the denominator is a normalizing constant in order for the posterior $P(\theta | Data)$ to be a proper probability distribution.
-We will later refer to it in the section about Bayes factors as the *marginal likelihood* of the model (since it is the likelihood marginalized over all parameter values), also called *model evidence*.]
+The posterior distribution is thus -- analogous to the prior distribution -- our belief about different parameter values for $\theta$ *after* having seen the data.
 When moving from a prior to a posterior distribution credibility is realocated from the prior distribution to a posterior distribution that represents credibility informed by both the prior information and the data.
+The term $P(Data)$ in the denominator is a normalizing constant in order for the posterior $P(\theta | Data)$ to be a proper probability distribution.
+We will later refer to it in the section about Bayes factors as the *marginal likelihood* of the model (since it is the likelihood marginalized over all parameter values), also called *model evidence*.
 
 @Kruschke2013 introduced a pre-defined Bayesian model that can be used to draw inferences about the estimated differences between two independent groups. 
 This procedure provides researchers with a simple and easy-to-use test to evaluate the data in a Bayesian estimation framework.
-The goal of this approach is to arrive at an approximation of the posterior distribution, which can be used to make inferences about the data. 
+As such, the approach provides samples from the posterior distribution, which can be used to make inferences about the data. 
 Importantly, the whole posterior distribution provides the statistical inference, even if only summaries are presented [@Kruschke2017].
 Even when summaries of the posterior distribution are given, such as means, standard deviations, or credibility intervals, the entire Bayesian posterior distribution is available, and provides more information than frequentist statistics.
 One way to summarise the posterior distribution is to provide intervals of parameter values that are considered to be most credible.
@@ -274,24 +284,33 @@ posterior.mode <- summary(best)["muDiff","mode"]
 ```
 
 In our imaginary study where we compare an 8-week meditation class to patients receiving acupuncture we find a `r (hdi.level)*100`% Highest Density Interval (HDI) of $[`r hdi['lower']`; `r hdi['upper']`]$ for the difference in pain intensity between the two conditions.
-This means that the `r (hdi.level)*100`% most credible values for the difference in means, given our model, which incorporates both the prior information and the observed data, lie between `r hdi['lower']`mm and `r hdi['upper']`mm.^[Differences between the confidence interval reported above and the Bayesian HDI are to be expected.
-First, since we are using a `r hdi.level*100`% interval for the HDI and a `r (1-2*sig.level)*100`% confidence interval in the equivalence test, the HDI is expected to be narrower than the confidence interval.
-Generally, the prior affects the width and location of the HDI.
-If the priors that is used for the model is not uniform (as in the BEST model), differences between an HDI and a confidence interval are to be expected.
-With sufficient data, the data should outweigh the prior, but with smaller amounts of data, it can be advisable to explore the impact of different priors on the inference.] 
+This means that the `r (hdi.level)*100`% most credible values for the difference in means, given our model, which incorporates both the prior information and the observed data, lie between `r hdi['lower']`mm and `r hdi['upper']`mm.
 Figure \ref{fig:best-posterior-plot} visualizes this result.
+
+Differences between the confidence interval reported above and the Bayesian HDI are to be expected.
+First, since we are using a `r hdi.level*100`% interval for the HDI and a `r (1-2*sig.level)*100`% confidence interval in the equivalence test, the HDI is expected to be narrower than the confidence interval reported above.
+More generally, the prior affects the width and location of the HDI in Bayesian estimation.
+If the priors that are used for the model are not uniform, differences between an HDI and a confidence interval are to be expected.
+With sufficient data, the data will outweigh the prior, but with smaller amounts of data, it can be advisable to explore the impact of different priors on the inference.
+In the BEST model, the priors are not uniform but chosen to have minimal impact on the inferences, so even if only few data points are available, the prior should not have too much influence on the results.
 
 The posterior distribution can be used to answer several other questions as well.
 Besides the HDI, we can find the most credible value for the difference between the two groups, which would be the posterior mode, or *Maximum A Posteriori estimate* (MAP), which is `r posterior.mode` (and differs slighty from the frequentist estimate of the difference due to the prior).
-When the goal is to perform a hypothesis test on the posterior distribution, @Kruschke2017 propose to define a *Region of Practical Equivalence* (ROPE) which is identical to setting equivalence bounds based on a smallest effect size of interest as laid out above. 
-The ROPE procedure uses two simple decision rules [@Kruschke2014, p. 336f, emphasis in original]:
+When one aims to make a dichotomous decision about parameter values based on the posterior distribution, @Kruschke2017 propose to define a *Region of Practical Equivalence* (ROPE) which is identical to setting equivalence bounds based on a smallest effect size of interest as laid out above. 
+The ROPE procedure uses the following decision rule [@Kruschke2018]:
+
+> If the 95% HDI of the parameter distribution falls completely outside the ROPE then reject the null value, because the 95% most credible values of the parameter are all not practically equivalent to the null value.
+> If the 95% HDI of the parameter distribution falls completely inside the ROPE then ''accept'' the null value for practical purposes, because the 95% most credible values of the parameter are all practically equivalent to the null value.
+> Otherwise remain undecided.
+
+<!-- The ROPE procedure uses two simple decision rules [@Kruschke2014, p. 336f, emphasis in original]: 
 
 > A parameter value is declared to be *not* credible, or rejected, if its entire ROPE lies outside the 95% highest density interval (HDI) of the posterior distribution of that parameter. [...]
-> A parameter value is declared to be accepted for practical purposes if that value's ROPE completely contains the 95% HDI of that parameter.
+> A parameter value is declared to be accepted for practical purposes if that value's ROPE completely contains the 95% HDI of that parameter. -->
 
 By comparing the `r (hdi.level)*100`% HDI with the *region of practical equivalence* (ROPE) between $\Delta_{L}$ = $-9\mathrm{mm}$ and $\Delta_{U}$ = $+9\mathrm{mm}$, based on the same equivalence bounds as before, researchers can conclude equivalence when the HDI lies within the region of practical equivalence (or between the equivalence bounds).
-Because the `r (hdi.level)*100`% HDI ($[`r hdi['lower']`; `r hdi['upper']`]$) lies well within those bounds (as can be seen in Figure \ref{fig:best-posterior-plot}), we declare a difference of exactly zero to not be credible for practical purposes.
-We do not, however, reject any other specific value within the ROPE.
+Because the `r (hdi.level)*100`% HDI ($[`r hdi['lower']`; `r hdi['upper']`]$) lies well within those bounds (as can be seen in Figure \ref{fig:best-posterior-plot}), we declare a difference of exactly zero to be accepted for practical purposes based on the decision rule above.
+We do not, however, accept or reject any other specific value within the ROPE.
 
 The Bayesian ROPE procedure is quite similar to equivalence tests, but there are several important dinstinctions. 
 In the Bayesian approach we can make statements about which values we believe are most credible, based on the data and the model, while in frequentist statistics we are make dichotomous decisions based on long-run error rates. 
@@ -352,6 +371,7 @@ A common criticism on Bayes factors is that they are much more sensitive to the 
 In a Bayesian estimation framework (such as the ROPE procedure) the data quickly overwhelm the prior, so the prior has a very limited effect on the final statistical inference.
 For Bayes factors, on the other hand, priors have much more weight and thus need to justified carefully before looking at the data.
 We would caution against the use of 'default' priors when calculating Bayes factors [see @Dienes2014], which are a compromise between general expectations about effect sizes and useful mathematical properties [e.g. @Rouder2009], but should only be chosen if they actually reflect a useful alternative model given the research question.
+Moreover, Bayes factors -- very much like $p$-values -- do not convey information about the magnitude of an effect or the uncertainty in its estimation. See @Kruschke2018b for further criticism on Bayes factors.
 
 Bayes factors can be used to examine null effects by quantifying the relative evidence in the data for a null-model compared to an alternative model.
 In our calculation of a Bayes factor for our hypothetical data we wanted the prior for the alternative model to represent our expectation about the presence of a true effect.
@@ -365,8 +385,7 @@ ci.width <- (.98-.25)
 bf.alt.sd <- ((ci.width/2)/1.96) * sqrt(4)
 ```
 
-We specify an alternative model with a normal prior distribution centered on $`r bf.alt.mu`$ with a standard deviation of $`r bf.alt.sd`$ (calculated from the confidence interval):
-$M_1:\ \delta \sim \mathcal{N}(`r bf.alt.mu`, `r bf.alt.sd`)$.
+We specify an alternative model with a normal prior distribution centered on $`r bf.alt.mu`$ with a standard deviation of $`r bf.alt.sd`$ (calculated from the confidence interval): $M_1:\ \delta \sim \mathcal{N}(`r bf.alt.mu`, `r bf.alt.sd`)$.
 The $M_1$ model is compared against the null model $M_0$ with a prior that has its point mass at 0 (i.e. a point null hypothesis).
 
 ```{r bayesfactor-calculation}
@@ -399,7 +418,8 @@ There is rarely an objective answer to this question, and researchers are free t
 If we feel that the two models are equally likely *a priori*, i.e. the prior odds are 1:1, then the Bayes factor would be equal to the posterior odds.
 If, on the other hand, we feel that the null hypothesis is four times more likely than the alternative hypothesis (before seeing any data from the study) and the Bayes factor is $\mathrm{BF}_{01} = `r 1/bf10`$, we should believe that the null model is about `r 4*(1/bf10)` (4 times `r (1/bf10)`, with a small difference due to rounding) more likely than the alternative after seeing the data.
 Since different researchers can have different beliefs about the prior odds of two hypotheses, Bayes factors are commonly reported, without a reference to prior or posterior odds, and the reader is assumed to update their own priors.
-The Bayes factor contains the neccessary information to make an inference.
+The Bayes factor contains the neccessary information to make an inference, but cannot be used on its own to reach a conclusion.
+Prior odds are a necessary part of the inferential method when using Bayes factors.
 
 ```{r hypotheses-plot, echo=FALSE, fig.width=4, fig.height=6.2, fig.show="show", fig.cap="Illustration of the different hypotheses under investigation [adapted from @lakens_scheel_isager_2018]. **(A)** The classic two-sided significance testing aims to reject a point null hypothesis (here an effect size of exactly zero). **(B)** In equivalence test, the $H_0$ of no equivalence is tested (grey region), so the white area is the rejection region. **(C)** For the Bayesian estimation approach, the 95% highest density interval of the posterior is compared against the Region of Practical Equivalence (ROPE) between $\\Delta_L$ and $\\Delta_U$. **(D)** For the Bayes factor, two models are compared that differ in their prior distributions: The $M_0$ prior is a point mass of 1 at an effect size of 0, the alternative model $M_1$ is here plotted as a Normal distribution as an example."}
 source("../R-scripts/Figures/Figure_Illustration_H0H1.R")
@@ -442,9 +462,10 @@ When calculating the posterior distribution in Bayesian statistics, a prior is c
 Any statements about the posterior distribution are not just based on the data, but also conditional on the model.
 The model includes the prior distributions which can be chosen more freely.
 They may represent a researchers beliefs prior to the data, but can also be used to regularise estimates or incorporate information from previous studies.
-It is thus important to explicitly state the model setup and provide a  justification for the choice of prior distributions.
-As a consequence, the 95% HDI of the posterior distribution does *not* include parameter values that are likely to be *true* (no statistical procedure will be able to provide this).
-Instead the 95% HDI contains the parameter values which are most *credible*, given the data and the model for the prior.
+It is thus important to explicitly state the model setup and provide a justification for the choice of prior distributions.
+As a consequence, the 95% HDI of the posterior distribution does *not* include parameter values that are likely to be *true*.
+No statistical procedure, including confidence intervals, will be able to provide this.
+Instead, the 95% HDI contains the parameter values which are most *credible*, given the data and the model for the prior.
 Finally, when calculating Bayes factors, it is important to realize that they provide relative evidence for two specificied models.
 A Bayes factor can indicate strong support for a null model relative to an alternative model, but both models can be wrong [and are perhaps even likely to be wrong, as 'all models are wrong, but some are useful', @box1987empirical, p. 424].
 The Bayes factor gives a relative indication which of the two models are more in line with the data (or 'less wrong' according to Box).
