@@ -104,7 +104,7 @@ sd.true.placebo <- 15
 sd.true.treatmt <- 15
 
 # Parameters for BEST MCMC
-M.best.mcmc <- 1e2
+M.best.mcmc <- 1e5
 parallel.best.mcmc <- FALSE
 ```
 ```{r power_analysis, include=FALSE}
@@ -297,20 +297,17 @@ In the BEST model, the priors are not uniform but chosen to have minimal impact 
 The posterior distribution can be used to answer several other questions as well.
 Besides the HDI, we can find the most credible value for the difference between the two groups, which would be the posterior mode, or *Maximum A Posteriori estimate* (MAP), which is `r posterior.mode` (and differs slighty from the frequentist estimate of the difference due to the prior).
 When one aims to make a dichotomous decision about parameter values based on the posterior distribution, @Kruschke2017 propose to define a *Region of Practical Equivalence* (ROPE) which is identical to setting equivalence bounds based on a smallest effect size of interest as laid out above. 
-The ROPE procedure uses the following decision rule [@Kruschke2018]:
+The ROPE procedure uses the following decision rule [see @Kruschke2018]:
 
-> If the 95% HDI of the parameter distribution falls completely outside the ROPE then reject the null value, because the 95% most credible values of the parameter are all not practically equivalent to the null value.
-> If the 95% HDI of the parameter distribution falls completely inside the ROPE then ''accept'' the null value for practical purposes, because the 95% most credible values of the parameter are all practically equivalent to the null value.
+> If the 95% HDI of the [parameter's posterior distribution] falls completely outside the ROPE than reject the null value, because the 95% most credible values of the parameter are all not practically equivalent to the null value.
+> If the 95% HDI of the [parameter's posterior distribution] falls completely inside the ROPE then "accept" the null value for practical purposes, because the 95% most credible values of the parameter are practically equivalent to the null value.
 > Otherwise remain undecided.
-
-<!-- The ROPE procedure uses two simple decision rules [@Kruschke2014, p. 336f, emphasis in original]: 
-
-> A parameter value is declared to be *not* credible, or rejected, if its entire ROPE lies outside the 95% highest density interval (HDI) of the posterior distribution of that parameter. [...]
-> A parameter value is declared to be accepted for practical purposes if that value's ROPE completely contains the 95% HDI of that parameter. -->
 
 By comparing the `r (hdi.level)*100`% HDI with the *region of practical equivalence* (ROPE) between $\Delta_{L}$ = $-9\mathrm{mm}$ and $\Delta_{U}$ = $+9\mathrm{mm}$, based on the same equivalence bounds as before, researchers can conclude equivalence when the HDI lies within the region of practical equivalence (or between the equivalence bounds).
 Because the `r (hdi.level)*100`% HDI ($[`r hdi['lower']`; `r hdi['upper']`]$) lies well within those bounds (as can be seen in Figure \ref{fig:best-posterior-plot}), we declare a difference of exactly zero to be accepted for practical purposes based on the decision rule above.
 We do not, however, accept or reject any other specific value within the ROPE.
+In the vocabulary of Bayesian statistics, using a decision rule on a posterior distribution of a single model does not constitute "hypothesis testing".
+The term "Bayesian hypothesis testing" refers strictly to the use of Bayes factors for model selection, which will be considered in the section of the paper.
 
 The Bayesian ROPE procedure is quite similar to equivalence tests, but there are several important dinstinctions. 
 In the Bayesian approach we can make statements about which values we believe are most credible, based on the data and the model, while in frequentist statistics we are make dichotomous decisions based on long-run error rates. 
@@ -371,7 +368,8 @@ A common criticism on Bayes factors is that they are much more sensitive to the 
 In a Bayesian estimation framework (such as the ROPE procedure) the data quickly overwhelm the prior, so the prior has a very limited effect on the final statistical inference.
 For Bayes factors, on the other hand, priors have much more weight and thus need to justified carefully before looking at the data.
 We would caution against the use of 'default' priors when calculating Bayes factors [see @Dienes2014], which are a compromise between general expectations about effect sizes and useful mathematical properties [e.g. @Rouder2009], but should only be chosen if they actually reflect a useful alternative model given the research question.
-Moreover, Bayes factors -- very much like $p$-values -- do not convey information about the magnitude of an effect or the uncertainty in its estimation. See @Kruschke2018b for further criticism on Bayes factors.
+Moreover, Bayes factors -- very much like $p$-values -- do not convey information about the magnitude of an effect or the uncertainty in its estimation.
+See @Kruschke2018b for further criticism on Bayes factors.
 
 Bayes factors can be used to examine null effects by quantifying the relative evidence in the data for a null-model compared to an alternative model.
 In our calculation of a Bayes factor for our hypothetical data we wanted the prior for the alternative model to represent our expectation about the presence of a true effect.
@@ -396,8 +394,15 @@ bf10 <- BayesFactor_InformedNormal(abs(ttest$statistic), n.group, n.group,
                                    prior.variance = bf.alt.sd^2)
 ```
 
+```{r bf-plot, echo=FALSE, fig.cap="Visual representation of the Bayes factor as Savage-Dickey ratio [@Wagenmakers2010]: The Bayes factor can be understood as the ratio between the posterior and the prior at $\\delta = 0$."}
+knitr::include_graphics("./Figure_BayesFactor_Example.eps")
+```
+
 A Bayes factor for a $t$-test yields $\mathrm{BF}_{01} = `r 1/bf10`$ [calculuated using R, or JASP following the formula given by @2017arXiv170402479G]. 
-We can thus conclude that the data is `r 1/bf10` times more in favour of the null model compared to the informed alternative model that we specified. 
+We can thus conclude that the data is `r 1/bf10` times more in favour of the null model compared to the informed alternative model that we specified.
+The Bayes factor can be represented visually as in Figure \ref{fig:bf-plot}:
+It shows the ratio between the prior and posterior distribution at $\delta = 0$, the point of interest for the null hypothesis.
+This ratio is called the *Savage-Dickey ratio* [@Wagenmakers2010].
 Although Bayes Factors can be interpreted as continuous measures of model evidence, thresholds for interpreting Bayes factors have been proposed by @Jeffreys1961 which might be useful for researchers who begin to report and interpret Bayes factors. 
 A Bayes factor of 1 indicates the data are equally likely under both models. 
 Bayes factors between 1 and 3 constitute mere 'anecdotal' evidence, which is considered 'worth not more than a bare mentioning' [@Jeffreys1961, Appendix B]. 
@@ -465,7 +470,7 @@ They may represent a researchers beliefs prior to the data, but can also be used
 It is thus important to explicitly state the model setup and provide a justification for the choice of prior distributions.
 As a consequence, the 95% HDI of the posterior distribution does *not* include parameter values that are likely to be *true*.
 No statistical procedure, including confidence intervals, will be able to provide this.
-Instead, the 95% HDI contains the parameter values which are most *credible*, given the data and the model for the prior.
+Instead, the 95% HDI contains the parameter values which are most *credible*, given the data and the model (including the priors).
 Finally, when calculating Bayes factors, it is important to realize that they provide relative evidence for two specificied models.
 A Bayes factor can indicate strong support for a null model relative to an alternative model, but both models can be wrong [and are perhaps even likely to be wrong, as 'all models are wrong, but some are useful', @box1987empirical, p. 424].
 The Bayes factor gives a relative indication which of the two models are more in line with the data (or 'less wrong' according to Box).
@@ -503,7 +508,7 @@ Null hypothesis significance testing has been critised because it is often misus
 Null-hypothesis tests limit researchers to asking the question whether the null-hypothesis can be rejected.
 By adding statistical techniques such as equivalence testing, Bayesian estimation, and Bayes factors to ones repertoire, researchers can substantially improve the inference they can draw from null-effects. 
 Being able to demonstrate the absence of effects is important in all major approaches to philosophy of science [@Fidler2018].
-When researchers only publish scientific findings that statistically reject null effects, the scientific literature is biased, which hinders the accumulation of scientific knowledge.
+When researchers only publish scientific findings that statistically reject null effects, the scientific literature is biased, which hinders the accumulation of scientific knowledge [@Kuhberger2014;@Locascio2017].
 By using statistical approaches that can provide informative conclusions about null effects, researchers might not be able to 'prove the null', but they can substantially improve their statistical inferences about null-effects.
 
 \newpage
