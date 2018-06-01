@@ -104,7 +104,7 @@ sd.true.placebo <- 15
 sd.true.treatmt <- 15
 
 # Parameters for BEST MCMC
-M.best.mcmc <- 1e5
+M.best.mcmc <- 1e2
 parallel.best.mcmc <- FALSE
 ```
 ```{r power_analysis, include=FALSE}
@@ -308,6 +308,7 @@ Because the `r (hdi.level)*100`% HDI ($[`r hdi['lower']`; `r hdi['upper']`]$) li
 We do not, however, accept or reject any other specific value within the ROPE.
 In the vocabulary of Bayesian statistics, using a decision rule on a posterior distribution of a single model does not constitute "hypothesis testing".
 The term "Bayesian hypothesis testing" refers strictly to the use of Bayes factors for model selection, which will be considered in the section of the paper.
+An alternative way to investigate the practical equivalence using the information contained in the posterior distribution, @Greenwald1975 recommends to investigate the probability mass contained in the ROPE [s. @Greenwald1975, p. 18].
 
 The Bayesian ROPE procedure is quite similar to equivalence tests, but there are several important dinstinctions. 
 In the Bayesian approach we can make statements about which values we believe are most credible, based on the data and the model, while in frequentist statistics we are make dichotomous decisions based on long-run error rates. 
@@ -365,9 +366,12 @@ Figure \ref{fig:hypotheses-plot}(D) illustrates the two models compared when cal
 In the figure $M_0$ is represented by a point-null hypothesis and $M_1$ is represented by a distribution that assumes small effect sizes are more likely than large effect sizes, but which is not very restrictive and assigns probabilities to a wide range of possible values.
 
 A common criticism on Bayes factors is that they are much more sensitive to the specification of the prior than Bayesian model estimation. 
-In a Bayesian estimation framework (such as the ROPE procedure) the data quickly overwhelm the prior, so the prior has a very limited effect on the final statistical inference.
-For Bayes factors, on the other hand, priors have much more weight and thus need to justified carefully before looking at the data.
-We would caution against the use of 'default' priors when calculating Bayes factors [see @Dienes2014], which are a compromise between general expectations about effect sizes and useful mathematical properties [e.g. @Rouder2009], but should only be chosen if they actually reflect a useful alternative model given the research question.
+While the data quickly overwhelms the prior in a Bayesian estimation framework (such as the ROPE procedure), the priors in a Bayes factor have much more weight.
+It is important to note, however, that priors have different purposes in the two applications:
+In Bayesian models for estimation, the priors are used as a device for regularization and shrinkage of parameter estimates.
+This can be driven by subjective beliefs or statistical considerations (see discussion on subjective and objective use of priors above).
+For Bayes factors, on the other hand, priors should represent the predictions of a theory.
+Therefore, it is cautioned against the use of 'default' priors when calculating Bayes factors [see @Dienes2014], which are a compromise between general expectations about effect sizes and useful mathematical properties [e.g. @Rouder2009], but should only be chosen if they actually reflect a useful alternative model given the research question.
 Moreover, Bayes factors -- very much like $p$-values -- do not convey information about the magnitude of an effect or the uncertainty in its estimation.
 See @Kruschke2018b for further criticism on Bayes factors.
 
@@ -496,9 +500,11 @@ Although there are many different flavors of Bayesian statistics, a strength of 
 Whether quantified beliefs or any other statistical inference corresponds with reality depends on how accurate model assumptions are. 
 This is relevant for Bayesian models and the chosen prior distributions as well as for model assumptions in frequentist statistics.
 
-In Bayesian estimation the prior can be used to regularise parameter estimates. 
-Especially in small samples and in more complex models, this avoids overfitting the data and can lead to better estimates for out-of-sample inferences and predictions [@Gelman2013e, chap. 14.6].
-While the perceived subjectivity of priors has been critised by frequentist analysts, with increasing amounts of data, the prior has less influence on the statistical inference.
+In Bayesian estimation the prior can be used to shrink or regularise parameter estimates. 
+Especially in small samples and more complex models, this avoids overfitting the data and can lead to better estimates for out-of-sample inferences and predictions [@Gelman2013e, chap. 14.6].
+Using priors is an automatic way to perform this shrinkage.
+If a lot of data is available, the amount of shrinkage is reduced and the prior has less influence on the statistical inference.
+This can be seen as a beneficial property of the way Bayesian estimation handles shrinkage.
 Finally, the Bayesian approach to statistical modelling is very versatile and can be used even in very complex models. 
 Bayesian hierarchical or multilevel models are particularly useful in clinical research, for example, when using clustered samples or repeated measurements [@Goldstein2002;@Turner2001;@Gelman2013e, chap. 5].
 
