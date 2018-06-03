@@ -51,7 +51,7 @@ library(ggbeeswarm)
 Most scientific research questions are stated in order to demonstrate the prediction that an effect or a difference exists. 
 Does this drug work?
 Is there a difference between participants treated with antidepressants and patients going to psychotherapy?
-Common practice is to analyse the resulting studies using null hypothesis significance testinyg (NHST), for example by performing a $t$-test or a Mann-Whitney-U-test, and to conclude that there is a difference between a control and a treatment group when a difference of zero can be statistically rejected.
+Common practice is to analyse the resulting studies using null hypothesis significance testing (NHST), for example by performing a $t$-test or a Mann-Whitney-U-test, and to conclude that there is a difference between a control and a treatment group when a difference of zero can be statistically rejected.
 
 There are three scenarios in which the opposite research question, demonstrating the absence of an effect or difference, might be of interest:
 
@@ -72,7 +72,7 @@ The null-hypothesis can not be statistically evaluated in complete isolation.
 Furthermore, it is impossible in empirical research to 'prove' a prediction, since theories and predictions are inherently probabilistic in an inductive empirical science.
 Rare events will happen, and thus the absence of an effect is always concluded based on a certain probability of making an error, or given a certain level of certainty.
 The aim of the present article is to give an overview of statistical methods suited to investigate 'null effects', and explain how to translate the statistical results from these methods into valid conclusions about the prediction that is tested. 
-We provide a hypothetical example that is analyzed using four different methods, discuss how to interpretat the results (as well as possible misinterpretations), and briefly explain the inferential frameworks these different methods are based on. 
+We provide a hypothetical example that is analyzed using four different methods, discuss how to interpret the results (as well as possible misinterpretations), and briefly explain the inferential frameworks these different methods are based on. 
 
 # Investigating 'Null Effects'
 
@@ -153,7 +153,9 @@ ggplot(data = df, aes(x = Group, y = DV)) +
   theme_apa()
 ```
 
-The fictional measurements collected from `r n.group*2` participants are visualised in Figure \ref{fig:data-plot}. The mean change in self-reported lower back pain intensity on the 100mm VAS over the eight week period (and standard deviations) are $`r mean(df[df$Group == "Meditation",]$DV)`$ ($`r sd(df[df$Group == "Meditation",]$DV)`$) in the Meditation group and $`r mean(df[df$Group == "Acupuncture",]$DV)`$ ($`r sd(df[df$Group == "Acupuncture",]$DV)`$) in the control group.
+For the imaginary study we simulated random samples using R from two independent normal distributions.[^The scripts for generating the simulated samples are included in the accompanying OSF repository.]
+The fictional measurements collected from `r n.group*2` participants are visualised in Figure \ref{fig:data-plot}.
+The mean change in self-reported lower back pain intensity on the 100mm VAS over the eight week period (and standard deviations) are $`r mean(df[df$Group == "Meditation",]$DV)`$ ($`r sd(df[df$Group == "Meditation",]$DV)`$) in the Meditation group and $`r mean(df[df$Group == "Acupuncture",]$DV)`$ ($`r sd(df[df$Group == "Acupuncture",]$DV)`$) in the control group.
 
 ```{r Perform tests, include=FALSE}
 ttest <- t.test(DV ~ Group, data = df, alternative = c("two.sided"))
@@ -163,13 +165,24 @@ ttest <- t.test(DV ~ Group, data = df, alternative = c("two.sided"))
 A common first question in experiments where participants are randomly assigned to two conditions is to examine whether we can statistically reject a difference between the groups that is exactly zero.
 This null hypothesis can be examined by performing a $t$-test with a significance level of $\alpha = `r sig.level`$.
 The two-sample Welch's $t$-test (which does not assume equal variances) yields `r apa_print(ttest)$statistic`. 
-The $p$-value is not statistically significant, which means the observed difference in the data is not extreme enough to reject the hypothesis that the changes in pain scores in both groups are the same.
+The $p$-value is not statistically significant, which means the estimated population difference in the data is not extreme enough to reject the hypothesis that the changes in pain scores in both groups are the same.
 A non-significant test result does *not* mean that the null hypothesis is true. 
 Non-significant results simply indicate that the data are not surprising if we assume there were no differences between the groups.
 This might be because there is no true difference between the two groups, in which case a non-significant effect is expected with a frequency of `r 1-sig.level`.
 But it is also possible that there is a difference, but due to chance, it was not observed, which should happen `r round( (1 - priori.power) * 100 )`% of the time if the true effect size is $d = `r sesoi.d`$ (and more often if the  difference between groups in the population is smaller than $d = `r sesoi.d`$). 
 
-A null hypothesis significance test cannot distinguish between the conclusion that an observed difference is too small to be considered meaningful, or an inconclusive result (i.e., the effect is not statistically different from zero, but also not statistically smaller than any effect you care about). 
+It should be noted, that there are different frameworks for performing significance tests in frequentist statistics.
+Statistician Sir Ronald Fisher introduced the concept of significance tests.
+In the Fisherian test, a $p$-value is computed under the null-hypothesis.
+Importantly, in the Fisherian significance test no alternativ hypothesis is specified.
+Jerzy Neyman and Karl Pearson extended on Fisher's significance tests (much to Fisher's dismay) by introducing the concepts of power and alternative hypotheses [@Neyman1933].
+The goal of Neyman-Pearson significance testing is to warrant long-run error rates.
+This requires an *a priori* power analyses (as done above) under which an alternative hypothesis is set up and the long-run Type II error rate is chosen (through the chosen level of power).
+In applied practice, there has evolved a hybrid between the two paradigms of statistical testing [@Perezgonzalez2015], that is mostly incompatible with either theory of statistical testing.
+For proper statistical inferences it is important to use the statistical methods in line with their theoretical basis.
+In this section and the section on equivalence testing, we focus on the Neyman-Pearson approach of hypothesis testing and interpret the results of a statistical test as a dichotomous decision for which we have decided on long-run error rates.
+
+A null hypothesis significance test cannot distinguish between the conclusion that an estimated population difference is too small to be considered meaningful, or an inconclusive result (i.e., the effect is not statistically different from zero, but also not statistically smaller than any effect you care about). 
 This often leads researchers to believe non-significant results are not informative. 
 While a non-significant result in a null-hypothesis significance test *per se* does not allow us to decide between the absence of a meaningful effect, or an inconclusive result due to low power, the data might be informative when analyzed with statistical tests that do allow researchers to draw more useful conclusions about null-effects.
 
@@ -410,13 +423,13 @@ This ratio is called the *Savage-Dickey ratio* [@Wagenmakers2010].
 Although Bayes Factors can be interpreted as continuous measures of model evidence, thresholds for interpreting Bayes factors have been proposed by @Jeffreys1961 which might be useful for researchers who begin to report and interpret Bayes factors. 
 A Bayes factor of 1 indicates the data are equally likely under both models. 
 Bayes factors between 1 and 3 constitute mere 'anecdotal' evidence, which is considered 'worth not more than a bare mentioning' [@Jeffreys1961, Appendix B]. 
-Thus, although the data support the null model over the alternative model, there is no good reason to conclude in favor of either model. 
+Thus, although the data support the null model over the alternative model, there is no good reason to conclude in favor of either model - at least if not one model is much more reasonable than the other in general without respect to the data (this issue is extended on below).
 Stronger model evidence would be desirable, which means more data must be collected [@Schonbrodt2015b].
 
 The difference between the result of Bayes factor analysis, the equivalence test, and the ROPE procedure reported earlier has several reasons.
 Most importantly, the questions that were asked differed across the tests.
 The equivalence test sought to reject an effect specified by and upper and lower equivalence bounds of $\pm 9\mathrm{mm}$ (see Figure \ref{fig:hypotheses-plot}(B)), and the ROPE procedure examined wether the 95% HDI fell within the region of practical equivalence (Figure \ref{fig:hypotheses-plot}(C)).
-The Bayes factor investigated whether the data was more in line with a null model or amodel specified based on expectations derived from previous studies.
+The Bayes factor investigated whether the data was more in line with a null model or a model specified based on expectations derived from previous studies.
 Researchers need to be aware of the precise question they want to ask from the data and the method they use to do answer their question.
 In order to draw informative inferences from the data, it is crucial that a statistical test is selected in which alternative hypotheses are defined that answer a question of interest.
 
@@ -427,7 +440,7 @@ There is rarely an objective answer to this question, and researchers are free t
 If we feel that the two models are equally likely *a priori*, i.e. the prior odds are 1:1, then the Bayes factor would be equal to the posterior odds.
 If, on the other hand, we feel that the null hypothesis is four times more likely than the alternative hypothesis (before seeing any data from the study) and the Bayes factor is $\mathrm{BF}_{01} = `r 1/bf10`$, we should believe that the null model is about `r 4*(1/bf10)` (4 times `r (1/bf10)`, with a small difference due to rounding) more likely than the alternative after seeing the data.
 Since different researchers can have different beliefs about the prior odds of two hypotheses, Bayes factors are commonly reported, without a reference to prior or posterior odds, and the reader is assumed to update their own priors.
-The Bayes factor contains the neccessary information to make an inference, but cannot be used on its own to reach a conclusion.
+If a researcher accepts the prior distributions for the parameters in the models compared in the Bayes factor, the Bayes factor contains the necessary information to update their own prior odds and make an inference.
 Prior odds are a necessary part of the inferential method when using Bayes factors.
 
 ```{r hypotheses-plot, echo=FALSE, fig.width=4, fig.height=6.2, fig.show="show", fig.cap="Illustration of the different hypotheses under investigation [adapted from @lakens_scheel_isager_2018]. **(A)** The classic two-sided significance testing aims to reject a point null hypothesis (here an effect size of exactly zero). **(B)** In equivalence test, the $H_0$ of no equivalence is tested (grey region), so the white area is the rejection region. **(C)** For the Bayesian estimation approach, the 95% highest density interval of the posterior is compared against the Region of Practical Equivalence (ROPE) between $\\Delta_L$ and $\\Delta_U$. **(D)** For the Bayes factor, two models are compared that differ in their prior distributions: The $M_0$ prior is a point mass of 1 at an effect size of 0, the alternative model $M_1$ is here plotted as a Normal distribution as an example."}
