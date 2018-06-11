@@ -62,7 +62,7 @@ Studies designed to answer such questions investigate non-inferiority (e.g., peo
 
 In all three cases statistical tools need to be applied that can provide an answer to the question whether we should believe, or act as if, a meaningful effect is absent.
 As @Earp2018 has laid out in his editorial, there is increasing attention to the fact that 'null results' need to be published in order to have a coherent scientific body of results. 
-Non-significant results are to be expected, even when examining a true effect, and publication bias (not submitting or publishing non-significant resuls) will inflate effect size estimates in the literature. 
+Non-significant results are to be expected, even when examining a true effect, and publication bias (not submitting or publishing non-significant resuls) will inflate effect size estimates in the literature [@Kuhberger2014;@Locascio2017]. 
 By using statistical approaches that allow researchers to evaluate null-results, researchers will be able to learn more from their data, and publication bias can perhaps be mitigated. 
 
 Researchers might want to know if a null-hypothesis is true, and therefore be interested in 'proving the null'.
@@ -77,13 +77,13 @@ We provide a hypothetical example that is analyzed using four different methods,
 # Investigating 'Null Effects'
 
 It is common practice in empirical research to rely almost exclusively on null-hypothesis significance testing (NHST) to investigate the presence of an effect.
-Because a null-hypothesis test can only reject the null (i.e. commonly the hypothesis of 'no effect'), it cannot be used to inform us about the absence of an effect.
+Because a null-hypothesis test can only reject the null (i.e. commonly the hypothesis of 'no effect'), it cannot be used to inform us about the absence of an effect in the population.
 When we observe a non-significant effect (e.g., $p > \alpha$, where $\alpha$ is the level of significance chosen ahead of data-collection), all we can conclude is that, assuming the true effect size in the population is zero, the observed data was not sufficiently different from zero to reject the null hypothesis without in the long run being wrong more often than a desired error rate.
-This does not rule out the possibility that the true effect size in the population differs from zero.
+This does not rule out the possibility that the true population effect size differs from zero.
 It is also possible that the experiment might have had relatively low power to detect the true effect size, or -- equivalently -- a high probability of making a Type 2 error (not rejecting the null-hypothesis when a true effect is present in the population).
 
 Null-hypothesis significance testing answers a specific question (i.e., can we reject the null-hypothesis?). 
-One can argue that in most studies without random assignment to conditions, and perhaps even in some studies with random assignment, it can be expected that the true effect size is unequal to zero.
+One can argue that in most studies without random assignment to conditions, and perhaps even in some studies with random assignment, it can be expected that the true (population) effect size is unequal to zero.
 Often an effect size of exactly zero (as assumed in the null hypothesis) is implausible [see theoretical work on the 'crud factor', @Meehl1990].
 For hypothesis testing, however, it is a useful model for comparison.
 When another question is of interest (i.e., can we conclude a meaningful effect is absent?), other statistical techniques should be used. 
@@ -104,7 +104,7 @@ sd.true.placebo <- 15
 sd.true.treatmt <- 15
 
 # Parameters for BEST MCMC
-M.best.mcmc <- 1e2
+M.best.mcmc <- 1e5
 parallel.best.mcmc <- FALSE
 ```
 ```{r power_analysis, include=FALSE}
@@ -113,15 +113,15 @@ n.group <- round(pwr.t.test(d = sesoi.d, sig.level = sig.level,
                             alternative = c("two.sided"))$n)
 ```
 
-Imagine you want to investigate whether mindfulness meditation has an effect on lower back pain (LBP), which is an increasingly common problem among desk-working adults.
-In a fictional study patients with lower back pain are recruited and randomly assigned to either an eight week mindfulness meditation class (the treatment group) or an eight week acupuncture therapy (an active control group). 
+Imagine, you want to investigate whether mindfulness meditation has an effect on lower back pain (LBP), which is an increasingly common problem among desk-working adults.
+In a fictional study patients with lower back pain are recruited and randomly assigned to either an eight week mindfulness meditation class (the treatment group) or an eight week waiting list condition (a passive control group). 
 At the time of inclusion in the study and after the eight week study period self-reported lower back pain intensity is measured on a 100mm Visual Analogue Scale (VAS) [@AbdelShaheed2016; @Machado2015]. 
 The dependent variable to be analyzed is the difference between the VAS scores at the end and start of the study.
-The mean change over the eight week period between the treatment group and the acupuncture group is examined using a two-sample $t$-test.^[The study design and analysis plan used herein is simplified for illustrative purposes. 
+The mean change over the eight week period between the treatment group and the control group is examined using a two-sample $t$-test.^[The study design and analysis plan used herein is simplified for illustrative purposes. 
 Practitioners might in reality consider a multilevel analysis to better account for different sources of variation [e.g. @Hayes2006].
 The general recommendations in this paper apply also in more complex models.]
 
-The sample size of the study is determined based on an *a priori* power analysis.
+The sample size of the study needs to be determined based on an *a priori* power analysis.
 Based on a discussion with experts in the field, the smallest effect size of the treatment that is still deemed worthwhile is Cohen's $d = `r sesoi.d`$, and the study is designed to have a high probability of observing a statistically significant effect, if there is a true effect at least as large as this smallest effect size of interest.
 Assuming it is relatively easy to get people to enroll in the study, and further assuming the researchers want to prevent incorrectly concluding the two treatments differ, the alpha level is set to `r sig.level` and the desired power for the smallest effect size of interest is set at `r round( priori.power * 100 )`%.^[Ideally, the alpha level is set based on a cost-benefit analysis of Type 1 and Type 2 errors, see @Lakens2018.]
 This means that if there is a true effect of $d = `r sesoi.d`$ or larger, we have at least `r round( priori.power * 100)`% chance of observing a significant effect (in the long run).
@@ -137,12 +137,12 @@ group.2 <- group.2[group.2 >= -100 & group.2 <= 100]
 group.2 <- group.2[1:n.group]
 
 df <- data.frame(DV = c(group.1, group.2),
-                 Group = as.factor(c(rep("Acupuncture", n.group),
+                 Group = as.factor(c(rep("Waiting List", n.group),
                                      rep("Meditation", n.group))))
 write.csv(df, file = paste0(getwd(), '/../Example Data/Example_Data.csv'))
 ```
 
-```{r, data-plot, fig.cap="Plot for the data of the imaginary study. Each dot represents a single case. Box plot shows median and 25% and 75% quartiles. Y-axis is dependent variable, i.e. Pain Intensity after either 8 weeks of meditation class or after 8 weeks of acupuncture therapy."}
+```{r, data-plot, fig.cap="Plot for the data of the imaginary study. Each dot represents a single case. Box plot shows median and 25% and 75% quartiles. Y-axis is dependent variable, i.e. Pain Intensity after either 8 weeks of meditation class or after 8 weeks of being on the waiting list."}
 ggplot(data = df, aes(x = Group, y = DV)) +
   #geom_violin(alpha = .3) +
   #geom_beeswarm(cex = 1.3, alpha = .2) +
@@ -153,9 +153,9 @@ ggplot(data = df, aes(x = Group, y = DV)) +
   theme_apa()
 ```
 
-For the imaginary study we simulated random samples using R from two independent normal distributions.[^The scripts for generating the simulated samples are included in the accompanying OSF repository.]
+For the imaginary study we simulated random samples using R from two independent normal distributions.^[The scripts for generating the simulated samples are included in the accompanying OSF repository.]
 The fictional measurements collected from `r n.group*2` participants are visualised in Figure \ref{fig:data-plot}.
-The mean change in self-reported lower back pain intensity on the 100mm VAS over the eight week period (and standard deviations) are $`r mean(df[df$Group == "Meditation",]$DV)`$ ($`r sd(df[df$Group == "Meditation",]$DV)`$) in the Meditation group and $`r mean(df[df$Group == "Acupuncture",]$DV)`$ ($`r sd(df[df$Group == "Acupuncture",]$DV)`$) in the control group.
+The mean change in self-reported lower back pain intensity on the 100mm VAS over the eight week period (and standard deviations) are $`r mean(df[df$Group == "Meditation",]$DV)`$ ($`r sd(df[df$Group == "Meditation",]$DV)`$) in the Meditation group and $`r mean(df[df$Group == "Waiting List",]$DV)`$ ($`r sd(df[df$Group == "Waiting List",]$DV)`$) in the control group.
 
 ```{r Perform tests, include=FALSE}
 ttest <- t.test(DV ~ Group, data = df, alternative = c("two.sided"))
@@ -163,18 +163,18 @@ ttest <- t.test(DV ~ Group, data = df, alternative = c("two.sided"))
 
 ## Null-Hypothesis Significance Test
 A common first question in experiments where participants are randomly assigned to two conditions is to examine whether we can statistically reject a difference between the groups that is exactly zero.
-This null hypothesis can be examined by performing a $t$-test with a significance level of $\alpha = `r sig.level`$.
+This null hypothesis can be examined by performing a $t$-test with the chosen significance level of $\alpha = `r sig.level`$.
 The two-sample Welch's $t$-test (which does not assume equal variances) yields `r apa_print(ttest)$statistic`. 
-The $p$-value is not statistically significant, which means the estimated population difference in the data is not extreme enough to reject the hypothesis that the changes in pain scores in both groups are the same.
+The $p$-value is not statistically significant, which means the estimated population difference in the data is not extreme enough to reject the hypothesis that the true changes in pain scores in both groups are the same.
 A non-significant test result does *not* mean that the null hypothesis is true. 
-Non-significant results simply indicate that the data are not surprising if we assume there were no differences between the groups.
-This might be because there is no true difference between the two groups, in which case a non-significant effect is expected with a frequency of `r 1-sig.level`.
-But it is also possible that there is a difference, but due to chance, it was not observed, which should happen `r round( (1 - priori.power) * 100 )`% of the time if the true effect size is $d = `r sesoi.d`$ (and more often if the  difference between groups in the population is smaller than $d = `r sesoi.d`$). 
+Non-significant results simply indicate that the data are not surprising if we assume there were no true differences between the manipulations.
+This might be because there is no difference between the two populations from which the two groups are sampled, in which case a non-significant effect is expected with a frequency of `r 1-sig.level`.
+But it is also possible that there is a difference, but due to sampling error, it was not observed, which should happen `r round( (1 - priori.power) * 100 )`% of the time if the true effect size is $d = `r sesoi.d`$ (and more often if the  difference between groups in the population is smaller than $d = `r sesoi.d`$). 
 
 It should be noted, that there are different frameworks for performing significance tests in frequentist statistics.
 Statistician Sir Ronald Fisher introduced the concept of significance tests.
-In the Fisherian test, a $p$-value is computed under the null-hypothesis.
-Importantly, in the Fisherian significance test no alternativ hypothesis is specified.
+In the Fisherian test, a $p$-value is computed under a null-hypothesis.
+Importantly, in the Fisherian significance test no alternative hypothesis is specified.
 Jerzy Neyman and Karl Pearson extended on Fisher's significance tests (much to Fisher's dismay) by introducing the concepts of power and alternative hypotheses [@Neyman1933].
 The goal of Neyman-Pearson significance testing is to warrant long-run error rates.
 This requires an *a priori* power analyses (as done above) under which an alternative hypothesis is set up and the long-run Type II error rate is chosen (through the chosen level of power).
@@ -200,12 +200,12 @@ In the past researchers were advised to interpret non-significant results by per
 For example, if a study had 90% power to detect an effect of $d = `r power.approach.d`$, researchers might conclude that if there is an effect, it would most likely be smaller than $d \geq `r power.approach.d`$.
 This is referred to as the 'power approach' [@Meyners2012;@Schuirmann1987]. 
 Based on the absence of a significant effect, researchers would conclude that it is unlikely that a true effect as large or larger than a specific size is present.
-However, this 'power approach' is superseded by the development of equivalence tests [@Meyners2012], and the 'power approach' is no longer recommended.
+However, the 'power approach' is superseded by the development of equivalence tests [@Meyners2012], and is no longer recommended.
 
 ## Equivalence Tests
 There is no statistical procedure that can confirm that the difference between two groups is exactly zero (beyond sampling the entire population, and finding that the observed difference or effect is exactly 0).
 However, it is possible to test whether an effect is close enough to zero to reject the presence of a meaningful difference.
-In this approach, researchers need to specify the difference that is considered too small to be meaningful, or the smallest effect size of interest (SESOI).
+In this approach, researchers need to specify the difference that is considered too small to be meaningful, the smallest effect size of interest (SESOI).
 The SESOI is in clinical domains also referred to as the 'minimal clinically important difference' (MCID). 
 A statistical test (very similar to the traditional $t$-test) is performed that examines whether we can statistically reject the presence of a difference as extreme, or more extreme, as the smallest difference we care about. 
 If we can reject the presence of a difference (with a desired alpha level) we can act as if the difference is *practically equivalent* to zero. 
@@ -220,15 +220,15 @@ An informative study should be designed to have sufficient power both (i) to det
 One way to test for equivalence is to perform the Two One-Sided Tests (TOST) procedure.
 A lower ($\Delta_{L}$) and upper ($\Delta_{U}$) equivalence bound is specified (e.g., a difference of -9mm or 9mm on a 100mm VAS). 
 A first one-sided test is performed to examine whether we can reject effects *smaller* than $\Delta_{L} = -9\mathrm{mm}$, and a second one-sided test is performed to test whether we can reject effect *larger* than $\Delta_{U} = +9\mathrm{mm}$. 
-If both one-sided tests are significant, we can reject the presence of a difference more extreme than $\pm 9\mathrm{mm}$, and conclude the observed effect is statistically equivalent, given the equivalence bounds that were chosen.
+If both one-sided tests are significant, we reject the presence of a difference more extreme than $\pm 9\mathrm{mm}$, and conclude the effect is statistically equivalent, given the equivalence bounds that were chosen.
 
 ```{r tost-plot, fig.width=7, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.cap="Visual representation of the equivalence test. Plotted is the confidence interval for the mean difference between the two groups. The bold line visualizes  the 98% confidence interval used for the TOST approach, while the thin 99% confidence interval is used for the traditinal significance test against the null hypothesis of zero difference. The equivalence test is significant, which can be inferred from the fact that the 98% confidence interval does not overlap with the equivalence bounds of $-9$mm and $+9$mm and we can reject the presence of a clinically meaningful effect."}
 tost <- TOSTtwo.raw(mean(df[df$Group == "Meditation",]$DV),
-                    mean(df[df$Group == "Acupuncture",]$DV),
+                    mean(df[df$Group == "Waiting List",]$DV),
                     sd(df[df$Group == "Meditation",]$DV),
-                    sd(df[df$Group == "Acupuncture",]$DV),
+                    sd(df[df$Group == "Waiting List",]$DV),
                     length(df[df$Group == "Meditation",]$DV),
-                    length(df[df$Group == "Acupuncture",]$DV),
+                    length(df[df$Group == "Waiting List",]$DV),
                     -9, +9, sig.level,
                     var.equal = F, plot = T)
 ```
@@ -236,7 +236,7 @@ tost <- TOSTtwo.raw(mean(df[df$Group == "Meditation",]$DV),
 @Lakens2017a created an R-package (TOSTER) and a spreadsheet to perform equivalence tests for $t$-tests, correlations, proportions, and meta-analyses. 
 Performing an equivalence test (again using Welch's $t$-test) on our fictional data, with an $\alpha$-level of `r sig.level`, yields a significant result ($t_1(`r ttest$parameter`) = `r tost$TOST_t1`$, $p < .001$; $t_2(`r ttest$parameter`) = `r tost$TOST_t2`$, $p < .001$). 
 The result is vizualized in Figure \ref{fig:tost-plot}, where the `r (1-sig.level*2)*100`% confidence interval is plotted and compared to the equivalence bounds of $-9\mathrm{mm}$ and $+9\mathrm{mm}$.
-The width of the confidence interval is $1 - 2\alpha$ since two one-sided tests are performed, both of which need to be significant to conclude equivalence, [@Rogers1993].
+The width of the confidence interval is $1 - 2\alpha$ since two one-sided tests are performed, both of which need to be significant to conclude equivalence [@Rogers1993].
 Using a Neyman-Pearson approach to statistical inferences, in which the goal is to make dichotomous decisions while controlling error rates at a desired level, we can *act* as if the difference between the two groups is smaller than the minimal clinically important difference of $\pm 9\mathrm{mm}$, without being wrong too often in the long run. 
 
 The present example represents the case of a non-significant result that is equivalent to zero.
@@ -247,9 +247,9 @@ Accessible introductions to equivalence testing are available [e.g. @Lakens2017a
 We provide scripts for R [@R-Base] and jamovi [@jamovi08] to reproduce the analyses and results in this paper as supplemental material.
 
 ## Bayesian estimation
-Frequentist statistics, which underly null-hypothesis significance tests and equivalence tests, have the goal to control error rates in the long run. Researchers can't know whether the conclusion made for any single study is one of these errors. Bayesian statistics allows researchers to make statements about the probability of a hypothesis, given the observed data.
-Bayesian statistics allows researchers to draw conclusions about a single datset because it uses a different definition of the term 'probability'. 
-The debate about which definition of probability is 'correct' has lead to a debate among statisticians and philosophers of science that has been going on for many decades. 
+Frequentist statistics, which underly null-hypothesis significance tests and equivalence tests, have the goal to control error rates in the long run. Researchers can't know whether the conclusion made for any single study is one of these errors.
+Bayesian statistics allows researchers to make statements about the probability of single events and specific hypotheses, given the observed data because it uses a different understandings of 'probability'. 
+The debate about which definition of probability is 'correct' or more adequate has lead to a debate among statisticians and philosophers of science that has been going on for many decades. 
 Luckily, researchers don't need to choose a side (unless they want to), because both approaches can be used side-by-side when analysing data. 
 Excellent introductions to Bayesian statistics from an applied perspective on statistics can be found in @McElreath2016 or @Kruschke2014.
 
@@ -271,22 +271,23 @@ $$
 $$
 where $\pi(\theta)$ is the prior distribution for our parameter $\theta$, and $P(Data | \theta)$ is the likelihood function of the model. $P(\theta | Data)$ is the *posterior distribution* of the parameter after seeing the data (i.e. the conditional probability of the parameter values given the observed data).
 The posterior distribution is thus -- analogous to the prior distribution -- our belief about different parameter values for $\theta$ *after* having seen the data.
-When moving from a prior to a posterior distribution credibility is realocated from the prior distribution to a posterior distribution that represents credibility informed by both the prior information and the data.
+When moving from a prior to a posterior distribution credibility is reallocated from the prior distribution to a posterior distribution that represents credibility informed by both the prior information and the data.
 The term $P(Data)$ in the denominator is a normalizing constant in order for the posterior $P(\theta | Data)$ to be a proper probability distribution.
 We will later refer to it in the section about Bayes factors as the *marginal likelihood* of the model (since it is the likelihood marginalized over all parameter values), also called *model evidence*.
 
 @Kruschke2013 introduced a pre-defined Bayesian model that can be used to draw inferences about the estimated differences between two independent groups. 
 This procedure provides researchers with a simple and easy-to-use test to evaluate the data in a Bayesian estimation framework.
-The approach provides samples from the posterior distribution, which can be used to make inferences about the data. 
+When using a Bayesian statistical model, samples from the posterior distribution are generated which can be used to make inferences about the data.
 One way to summarise the posterior distribution is to provide intervals of parameter values that are considered to be most credible.
 In Bayesian statistics Highest Density Intervals (HDI) are commonly used.
-For example, a 89% Highest Density Interval contains the values which, based on the statistical model used (including the prior distribution), are considered the 89% most credible. These can be calculated using the 'BEST' R-package [@R-BEST] or a web-app [@Baath2012]. 
+For example, a 89% Highest Density Interval contains the values which, based on the statistical model used (including the prior distribution), are considered the 89% most credible.
+For the pre-defined model by @Kruschke2013 the posterior samples can be generated and summarised using the 'BEST' R-package [@R-BEST] or a web-app [@Baath2012]. 
 Importantly, even if only summaries are presented such as means, standard deviations, or credibility intervals, the whole posterior distribution is available to provide the statistical inference [@Kruschke2017].
 
 ```{r rope-setup, include=FALSE}
 hdi.level <- .95
 best <- BESTmcmc(df[df$Group == "Meditation",]$DV,
-                 df[df$Group == "Acupuncture",]$DV,
+                 df[df$Group == "Waiting List",]$DV,
                  rnd.seed = 20180309, verbose = FALSE,
                  numSavedSteps = M.best.mcmc, parallel = parallel.best.mcmc)
 df.best <- data.frame(diff=(best$mu1-best$mu2))
@@ -295,7 +296,7 @@ hdi <- hdi(df.best$diff, credMass = hdi.level)
 posterior.mode <- summary(best)["muDiff","mode"]
 ```
 
-In our imaginary study where we compare an 8-week meditation class to patients receiving acupuncture we find a `r (hdi.level)*100`% Highest Density Interval (HDI) of $[`r hdi['lower']`; `r hdi['upper']`]$ for the difference in pain intensity between the two conditions.
+In our imaginary study where we compare an 8-week meditation class to patients on a waiting list we find a `r (hdi.level)*100`% Highest Density Interval (HDI) of $[`r hdi['lower']`; `r hdi['upper']`]$ for the difference in pain intensity between the two conditions.
 This means that the `r (hdi.level)*100`% most credible values for the difference in means, given our model, which incorporates both the prior information and the observed data, lie between `r hdi['lower']`mm and `r hdi['upper']`mm.
 Figure \ref{fig:best-posterior-plot} visualizes this result.
 
@@ -321,9 +322,9 @@ The term "Bayesian hypothesis testing" refers strictly to the use of Bayes facto
 An alternative way to investigate the practical equivalence using the information contained in the posterior distribution, e.g. @Greenwald1975 recommends to investigate the probability mass contained in the ROPE [s. @Greenwald1975, p. 18].
 
 The Bayesian ROPE procedure is quite similar to equivalence tests, but there are several important dinstinctions. 
-In the Bayesian approach we can make statements about which values we believe are most credible, based on the data and the model, while in frequentist statistics we are make dichotomous decisions based on long-run error rates. 
+In the Bayesian approach we can make statements about which values we believe are most credible, based on the data and the model, while in frequentist statistics we make dichotomous decisions based on long-run error rates. 
 Frequentist statistics is concerned with frequencies of events in the long run.
-Null-hypothesis tests and equivalence tests as discussed previously aim to control the rate at which incorrect conclusions are drawn about the presence or absence of effects at pre-specified levels.
+Null-hypothesis significance tests and equivalence tests as discussed previously aim to control the rate at which incorrect conclusions are drawn about the presence or absence of effects at pre-specified levels.
 As a consequence, the width of a confidence interval is directly related to the chosen $\alpha$ level.
 In the Bayesian approach, on the other hand, no statements about rates of decision errors can be made without additional assumptions and analyses.
 @Kruschke2017 use a 95% interval because of the convention to set the significance level at 5%, but the width of the HDI should only be seen as a useful summary of the complete posterior distribution, and is *not* related to the 5% Type 1 error rate of the confidence interval.^[Note, however, that in some practical cases frequentist confidence intervals and Bayesian credibility intervals yield the same range of values [@Albers2018].]
@@ -364,8 +365,8 @@ $$
 $$
 
 The most common approaches to calculating Bayes factors model the null-hypothesis as a point, with an alternative model that distributes the probability of the true value across a range of possible values.
-The choice for a null-model is generally similar to frequentist hypothesis testing, where the null hypothesis is commonly also a point hypothesis of exactly zero.
-For Bayes factors that closely resemble traditional statistical tests, the models are distinguished by different prior distributions for a parameter (usually a test statistic).
+This choice for a null-model is generally similar to frequentist hypothesis testing, where the null hypothesis is commonly also a point hypothesis of exactly zero.
+For Bayes factors that closely resemble traditional statistical tests, the two competing models are distinguished by different prior distributions for a parameter (usually a test statistic).
 
 Defining a reasonable alternative model is an important part of calculating a Bayes factor. 
 There are different ways in which the alternative model can be specified.
@@ -386,7 +387,7 @@ Moreover, Bayes factors -- very much like $p$-values -- do not convey informatio
 See @Kruschke2018b for additional criticisms on Bayes factors.
 
 Bayes factors can be used to examine null effects by quantifying the relative evidence in the data for a null-model compared to an alternative model.
-In our calculation of a Bayes factor for our hypothetical data we wanted the prior for the alternative model to represent our expectation about the presence of a true effect.
+In the Bayes factor calculation for our hypothetical data we wanted the prior for the alternative model to represent our expectation about the presence of a true effect.
 If our 8-week meditation class reduces pain intensity in a 100mm VAS scale compared to the active control condition, we expect it to be similar in size to other non-pharmaceutical interventions. 
 @Hoffman2007 performed a meta-analysis of different psychological interventions on pain intensity in patients with chronic lower back pain, and provided an estimated meta-analytical effect size of $d = 0.62$ (95% CI: $[0.25; 0.98]$) when comparing the effect of cognitive-behavioral therapy (CBT) against a waiting list condition.
 Therefore, we calculate a Bayes factor based on the expectation that a mindfulness meditation intervention might have similar effect size.
@@ -420,8 +421,8 @@ This ratio is called the *Savage-Dickey ratio* [@Wagenmakers2010].
 Although Bayes Factors can be interpreted as a continuous measure of model evidence, thresholds for interpreting Bayes factors have been proposed by @Jeffreys1961 which might be useful for researchers who begin to report and interpret Bayes factors. 
 A Bayes factor of 1 indicates the data are equally likely under both models. 
 Bayes factors between 1 and 3 constitute mere 'anecdotal' evidence, which is considered 'worth not more than a bare mentioning' [@Jeffreys1961, Appendix B]. 
-Thus, although the data support the null model over the alternative model specified by the prior, there is no good reason to conclude in favor of either model - at least if not one model is much more reasonable than the other in general without respect to the data (this issue is extended on below).
-Stronger model evidence would be desirable, which means more data must be collected [@Schonbrodt2015b].
+Thus, although the data support the null model over the alternative model specified by the prior, there is no good reason to conclude in favor of either model - at least if not either model is much more reasonable than the other *a priori* without respect to the data (this issue is extended on below).
+Stronger model evidence would be desirable, which means more data need to be collected [@Schonbrodt2015b].
 
 The difference between the result of the Bayes factor analysis, the equivalence test, and the ROPE procedure reported earlier has several reasons.
 Most importantly, the questions that were asked differed across the tests.
@@ -433,10 +434,10 @@ In order to draw informative inferences from the data, it is crucial that a stat
 The Bayes factor tells us how much our belief in the null model versus the alternative model should change.
 It does not, however, directly tell us how likely the null hypothesis is because it is a relative measure.
 As can be seen in the equation above, to calculate the posterior odds of the two competing hypotheses, a researcher needs to combine the Bayes factor with prior probabilities for the two hypotheses.
-There is rarely an objective answer to this question, and researchers are free to hold different beliefs. 
-If we feel that the two models are equally likely *a priori*, i.e. the prior odds are 1:1, then the Bayes factor would be equal to the posterior odds.
+There is rarely an objective answer to the question of prior odds, and researchers are free to hold different beliefs. 
+If we feel that the two models are equally likely *a priori*, i.e. the prior odds are 1:1, the Bayes factor would be equal to the posterior odds.
 If, on the other hand, we feel that the null hypothesis is four times more likely than the alternative hypothesis (before seeing any data from the study) and the Bayes factor is $\mathrm{BF}_{01} = `r 1/bf10`$, we should believe that the null model is about `r 4*(1/bf10)` (4 times `r (1/bf10)`, with a small difference due to rounding) more likely than the alternative after seeing the data.
-Since different researchers can have different beliefs about the prior odds of two hypotheses, Bayes factors are commonly reported, without a reference to prior or posterior odds, and the reader is assumed to update their own priors.
+Since different researchers can have different beliefs about the prior odds of two hypotheses, Bayes factors are commonly reported without a reference to prior or posterior odds and the reader is assumed to update their own priors.
 If a researcher accepts the prior distributions for the parameters in the models compared in the Bayes factor, the Bayes factor contains the necessary information to update their own prior odds and make an inference -- but the Bayes factor is by itself not sufficient to reach a conclusion.
 Prior odds are a necessary part of the inferential method when using Bayes factors.
 
@@ -449,7 +450,7 @@ source("../R-scripts/Figures/Figure_Illustration_H0H1.R")
 
 # Discussion
 
-There are good reasons to want to test whether meaningful effect sizes or theoretically predicted differences are absent in data that have been collected to examine a hypothesis.
+There are good reasons wanting to test whether meaningful effect sizes or theoretically predicted differences are absent in data that have been collected to examine a hypothesis.
 In recent years, statistical techniques such as equivalence testing, Bayesian estimation, and Bayesian hypothesis tests have become more widely available through open source software tools such as R [@R-Base], jamovi [@jamovi08], and JASP [@JASP2018], and accessible introductions with detailed examples [@lakens_scheel_isager_2018;@McElreath2016;@Kruschke2014]. 
 These statistical tools allow researchers to move beyond merely testing whether the null hypothesis can be rejected in a null-hypothesis significance test. 
 These complementary statistical approaches invite researchers to more carefully consider and specify which effect sizes they predict when there is a true effect. 
@@ -472,21 +473,21 @@ When performing a null-hypothesis significance test, a non-significant result ca
 To conclude this, one has to specify and test against whichever effect one defines to be 'meaningful'.
 An equivalence test can be used to statistically *reject* effects as large or larger than the smallest effect size of interest, with a long-term error rate.
 It can *not* be used to conclude the effect is exactly 0, or to reject the presence of *any* effect.
-When an equivalence test is statistically significant, it is possible that there is an true effect effect - it is just smaller than what was deemed meaningful when the study was designed.
+When an equivalence test is statistically significant, it is possible that there is an true effect effect - it might just be smaller than what was deemed meaningful when the study was designed.
 For this reason, conclusions based on equivalence tests must always specify the equivalence bounds that are used, and it is recommended to combine equivalence tests with null-hypothesis significance tests (which can also help to identify effects that are significant *and* equivalent, or practically insignificant differences).
 Thus, a statement such as 'the difference was statistically equivalent to zero' is imprecise, and a more precise interpretation is 'we could reject effect sizes more extreme than the equivalence bounds of $-0.4$ and $0.4$'. 
 
 When calculating the posterior distribution in Bayesian statistics, a prior is combined with the observed data.
 Any statements about the posterior distribution are not just based on the data, but also conditional on the model.
-The model includes the prior distributions which can be chosen more freely.
+The model includes the prior distributions which can be chosen rather freely.
 The prior distribution may represent a researchers beliefs prior to observing the data, but can also be used to regularise estimates or incorporate information from previous studies.
 It is thus important to explicitly state the model setup and provide a justification for the choice of a prior distributions when using Bayesian estimation.
 Because Bayesian estimates are infuenced by the choice of a prior, the 95% HDI of the posterior distribution does *not* include parameter values that are likely to be *true*.
-Instead, the 95% HDI contains the parameter values that are deemed most *credible* (hence the term 'credible interval'), given the data and the model (including the priors).
+Instead, the 95% HDI contains the parameter values that are deemed most *credible* (hence the term 'credible interval'), given the data and the model.
 
 Finally, when calculating Bayes factors, it is important to realize that they provide relative evidence for two specified models.
 A Bayes factor can indicate strong support for a null model relative to an alternative model, but both models can be wrong.
-The Bayes factor simply gives a relative indication of whether the data is more in line with the null-model or the alternative model.
+The Bayes factor gives a relative indication of whether the data is more in line with the null-model or the alternative model.
 
 ## Differences between Inferential Frameworks
 
@@ -502,7 +503,7 @@ The goal of such a test is to reject the presence of effects large enough to mat
 Any single study might lead to an incorrect conclusion, but theories that are correct should make predictions that are confirmed with expected error rates in lines of research.
 Although single studies are never sufficient to draw strong conclusions in science, this idea is especially central in frequentist statistics. 
 
-Bayesian statistics focuses more strongly on quantifying beliefs or making statements about which values are deemed credible.
+Bayesian statistics focus more strongly on quantifying beliefs or making statements about which values are deemed credible.
 In the case of Bayesian estimation, the focus lies on allocating credibility to parameter values (such as effect sizes or differences between groups), which can result in statements about degrees of belief.
 In the case of Bayes factors, the focus lies on quantifying the rational change in belief in a null-model or an alternative model, which is also termed *statistical evidence* [@Morey2016].
 Although there are many different flavors of Bayesian statistics, a strength of these approaches lies in drawing conclusions that incorporate pre-existing information in statistical inferences.
