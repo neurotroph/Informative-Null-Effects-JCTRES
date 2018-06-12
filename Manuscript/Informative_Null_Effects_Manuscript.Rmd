@@ -272,6 +272,7 @@ $$
 where $\pi(\theta)$ is the prior distribution for our parameter $\theta$, and $P(Data | \theta)$ is the likelihood function of the model. $P(\theta | Data)$ is the *posterior distribution* of the parameter after seeing the data (i.e. the conditional probability of the parameter values given the observed data).
 The posterior distribution is thus -- analogous to the prior distribution -- our belief about different parameter values for $\theta$ *after* having seen the data.
 When moving from a prior to a posterior distribution credibility is reallocated from the prior distribution to a posterior distribution that represents credibility informed by both the prior information and the data.
+If the prior distribution is accepted to represent a valid allocation of belief, the posterior distribution represents rationally updated belief through the observed data.
 The term $P(Data)$ in the denominator is a normalizing constant in order for the posterior $P(\theta | Data)$ to be a proper probability distribution.
 We will later refer to it in the section about Bayes factors as the *marginal likelihood* of the model (since it is the likelihood marginalized over all parameter values), also called *model evidence*.
 
@@ -447,9 +448,7 @@ source("../R-scripts/Figures/Figure_Illustration_H0H1.R")
 
 \clearpage
 
-
 # Discussion
-
 There are good reasons wanting to test whether meaningful effect sizes or theoretically predicted differences are absent in data that have been collected to examine a hypothesis.
 In recent years, statistical techniques such as equivalence testing, Bayesian estimation, and Bayesian hypothesis tests have become more widely available through open source software tools such as R [@R-Base], jamovi [@jamovi08], and JASP [@JASP2018], and accessible introductions with detailed examples [@lakens_scheel_isager_2018;@McElreath2016;@Kruschke2014]. 
 These statistical tools allow researchers to move beyond merely testing whether the null hypothesis can be rejected in a null-hypothesis significance test. 
@@ -466,14 +465,13 @@ The prevalence of bio-creep is a matter of ongoing research;
 Awareness of the issue is nevertheless important and should even more underline the need for conducting direct replication studies, meta-analyses and the use of adequate statistical tools.
 
 ## Possible Misconceptions
-
 Probability is not intuitive, and every statistical technique runs the risk of being misinterpreted.
 The techniques discussed in this article have great potential to improve statistical inferences, but it is important to prevent misinterpretations.
 When performing a null-hypothesis significance test, a non-significant result can not be used to conclude a meaningful effect is absent.
 To conclude this, one has to specify and test against whichever effect one defines to be 'meaningful'.
 An equivalence test can be used to statistically *reject* effects as large or larger than the smallest effect size of interest, with a long-term error rate.
 It can *not* be used to conclude the effect is exactly 0, or to reject the presence of *any* effect.
-When an equivalence test is statistically significant, it is possible that there is an true effect effect - it might just be smaller than what was deemed meaningful when the study was designed.
+Even when the traditional significance is not significant while the equivalent is statistically significant (and we would know that we have not committed any Type II or Type I error respectively), it is still possible that there is a true effect - it might just be smaller than what was deemed meaningful when the study was designed and the Smallest Effect Size of Interest was chosen.
 For this reason, conclusions based on equivalence tests must always specify the equivalence bounds that are used, and it is recommended to combine equivalence tests with null-hypothesis significance tests (which can also help to identify effects that are significant *and* equivalent, or practically insignificant differences).
 Thus, a statement such as 'the difference was statistically equivalent to zero' is imprecise, and a more precise interpretation is 'we could reject effect sizes more extreme than the equivalence bounds of $-0.4$ and $0.4$'. 
 
@@ -482,15 +480,14 @@ Any statements about the posterior distribution are not just based on the data, 
 The model includes the prior distributions which can be chosen rather freely.
 The prior distribution may represent a researchers beliefs prior to observing the data, but can also be used to regularise estimates or incorporate information from previous studies.
 It is thus important to explicitly state the model setup and provide a justification for the choice of a prior distributions when using Bayesian estimation.
-Because Bayesian estimates are infuenced by the choice of a prior, the 95% HDI of the posterior distribution does *not* include parameter values that are likely to be *true*.
-Instead, the 95% HDI contains the parameter values that are deemed most *credible* (hence the term 'credible interval'), given the data and the model.
+As with other measures of uncertainty such as confidence intervals, Bayesian credibility intervals are not guaranteed to contain true parameter values.
+The credible intervals contain values which are deemed credible based on the prior and the observed data with a specified posterior probability.
 
 Finally, when calculating Bayes factors, it is important to realize that they provide relative evidence for two specified models.
 A Bayes factor can indicate strong support for a null model relative to an alternative model, but both models can be wrong.
 The Bayes factor gives a relative indication of whether the data is more in line with the null-model or the alternative model.
 
 ## Differences between Inferential Frameworks
-
 All statistical methods give rise to probabilistic inferences.
 Rare events happen, and unlikely outcomes can be observed.
 Probabilistic methods can never be used to know with certainty that an effect is present or absent.
@@ -511,17 +508,15 @@ Whether quantified beliefs or any other statistical inference corresponds with r
 This is relevant for Bayesian models and the chosen prior distributions as well as for model assumptions in frequentist statistics.
 
 In Bayesian estimation the prior can be used to shrink or regularise parameter estimates. 
+Through Bayes' theorem, priors provide an automatic way to implement shrinkage in a statistical model.
 Especially in small samples and more complex models, this avoids overfitting the data and can lead to better estimates for out-of-sample inferences and predictions [@Gelman2013e, chap. 14.6].
-Using priors is an automatic way to perform this shrinkage.
-If a lot of data is available, the amount of shrinkage is reduced and the prior has less influence on the statistical inference.
-This can be seen as a beneficial property of the way Bayesian estimation handles shrinkage.
-Finally, the Bayesian approach to statistical modelling is very versatile and can be used even in very complex models. 
+With more data parameter estimates become more precise and the prior has less influence on the posterior distribution, thus providing less shrinkage as is desirable in most models.
+Finally, the Bayesian approach to statistical modelling is very versatile and can be used even in complex models such as hierarchical generalized models. 
 Bayesian hierarchical or multilevel models are particularly useful in clinical research, for example, when using clustered samples or repeated measurements [@Goldstein2002;@Turner2001;@Gelman2013e, chap. 5].
 
 ## Conclusion
-
 Null hypothesis significance testing has been critised because it is often misused and misunderstood [e.g. @Wasserstein2016].
-Researchers who only rely on null-hypothesis tests limit themselves in only asking the question whether the null-hypothesis can be rejected.
+Researchers who only rely on null-hypothesis significance tests limit themselves in only asking the question whether the null-hypothesis can be rejected.
 By adding statistical techniques such as equivalence testing, Bayesian estimation, and Bayes factors to ones repertoire, researchers can substantially improve the inference they can draw from null-effects by asking more relevant questions. 
 Being able to demonstrate the absence of effects is important in all major approaches to philosophy of science [@Fidler2018].
 When researchers only publish scientific findings that statistically reject null effects, the scientific literature is biased, which hinders the accumulation of scientific knowledge [@Kuhberger2014;@Locascio2017].
