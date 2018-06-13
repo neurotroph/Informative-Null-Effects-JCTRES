@@ -72,7 +72,7 @@ The null-hypothesis can not be statistically evaluated in complete isolation.
 Furthermore, it is impossible in empirical research to 'prove' a prediction, since theories and predictions are inherently probabilistic in an inductive empirical science.
 Rare events will happen, and thus the absence of an effect is always concluded based on a certain probability of making an error, or given a certain level of certainty.
 The aim of the present article is to give an overview of statistical methods suited to investigate 'null effects', and explain how to translate the statistical results from these methods into valid conclusions about the prediction that is tested. 
-We provide a hypothetical example that is analyzed using four different methods, discuss how to interpretat the results (as well as possible misinterpretations), and briefly explain which inferential frameworks these different methods are based on. 
+We provide a hypothetical example that is analyzed using four different methods, discuss how to interpret the results (as well as possible misinterpretations), and briefly explain which inferential frameworks these different methods are based on. 
 
 # Investigating 'Null Effects'
 
@@ -119,7 +119,7 @@ At the time of inclusion in the study and after the eight week study period self
 The dependent variable to be analyzed is the difference between the VAS scores at the end and start of the study.
 The mean change over the eight week period between the treatment group and the control group is examined using a two-sample $t$-test.^[The study design and analysis plan used herein is simplified for illustrative purposes. 
 Practitioners might in reality consider a multilevel analysis to better account for different sources of variation [e.g. @Hayes2006].
-The general recommendations in this paper apply also in more complex models.]
+The general recommendations in this paper also apply to more complex models.]
 
 The sample size of the study needs to be determined based on an *a priori* power analysis.
 Based on a discussion with experts in the field, the smallest effect size of the treatment that is still deemed worthwhile is Cohen's $d = `r sesoi.d`$, and the study is designed to have a high probability of observing a statistically significant effect, if there is a true effect at least as large as this smallest effect size of interest.
@@ -167,8 +167,8 @@ This null hypothesis can be examined by performing a $t$-test with the chosen si
 The two-sample Welch's $t$-test (which does not assume equal variances) yields `r apa_print(ttest)$statistic`. 
 The $p$-value is not statistically significant, which means the estimated population difference in the data is not extreme enough to reject the hypothesis that the true changes in pain scores in both groups are the same.
 A non-significant test result does *not* mean that the null hypothesis is true. 
-Non-significant results simply indicate that the data are not surprising if we assume there were no true differences between the manipulations.
-This might be because there is no difference between the two populations from which the two groups are sampled, in which case a non-significant effect is expected with a frequency of `r 1-sig.level`.
+Non-significant results simply indicate that the data are not surprising if we assume there were no true differences between the conditions.
+This might be because there is no difference between the two populations from which the two groups are sampled, in which case a non-significant effect is expected with a frequency of 1 - $\alpha$ = `r 1-sig.level`.
 But it is also possible that there is a difference, but due to sampling error, it was not observed, which should happen `r round( (1 - priori.power) * 100 )`% of the time if the true effect size is $d = `r sesoi.d`$ (and more often if the  difference between groups in the population is smaller than $d = `r sesoi.d`$). 
 
 It should be noted, that there are different frameworks for performing significance tests in frequentist statistics.
@@ -177,10 +177,10 @@ In the Fisherian test, a $p$-value is computed under a null-hypothesis.
 Importantly, in the Fisherian significance test no alternative hypothesis is specified.
 Jerzy Neyman and Karl Pearson extended on Fisher's significance tests (much to Fisher's dismay) by introducing the concepts of power and alternative hypotheses [@Neyman1933].
 The goal of Neyman-Pearson significance testing is to warrant long-run error rates.
-This requires an *a priori* power analyses (as done above) under which an alternative hypothesis is set up and the long-run Type II error rate is chosen (through the chosen level of power).
-In applied practice, there has evolved a hybrid between the two paradigms of statistical testing [@Perezgonzalez2015], that is mostly incompatible with either theory of statistical testing.
-For proper statistical inferences it is important to use the statistical methods in line with their theoretical basis.
-In this section and the section on equivalence testing, we focus on the Neyman-Pearson approach of hypothesis testing and interpret the results of a statistical test as a dichotomous decision for which we have decided on long-run error rates.
+This requires an *a priori* power analysis (as was done above) where an alternative hypothesis is specified and the long-run Type II error rate is chosen.
+In applied practice, a hybrid has evolved that combined aspects of the two paradigms of statistical testing [@Perezgonzalez2015].
+For proper statistical inferences it is important to use the statistical methods the formally correct manner, in line with the theoretical basis upon which they were developed.
+In this section and the section on equivalence testing, we focus on the Neyman-Pearson approach of hypothesis testing and interpret the results of a statistical test as a dichotomous decision how to act for which we have decided on long-run error rates.
 
 A null hypothesis significance test cannot distinguish between the conclusion that an estimated population difference is too small to be considered meaningful, or an inconclusive result (i.e., the effect is not statistically different from zero, but also not statistically smaller than any effect you care about). 
 This often leads researchers to believe non-significant results are not informative. 
@@ -222,7 +222,7 @@ A lower ($\Delta_{L}$) and upper ($\Delta_{U}$) equivalence bound is specified (
 A first one-sided test is performed to examine whether we can reject effects *smaller* than $\Delta_{L} = -9\mathrm{mm}$, and a second one-sided test is performed to test whether we can reject effect *larger* than $\Delta_{U} = +9\mathrm{mm}$. 
 If both one-sided tests are significant, we reject the presence of a difference more extreme than $\pm 9\mathrm{mm}$, and conclude the effect is statistically equivalent, given the equivalence bounds that were chosen.
 
-```{r tost-plot, fig.width=7, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.cap="Visual representation of the equivalence test. Plotted is the confidence interval for the mean difference between the two groups. The bold line visualizes  the 98% confidence interval used for the TOST approach, while the thin 99% confidence interval is used for the traditinal significance test against the null hypothesis of zero difference. The equivalence test is significant, which can be inferred from the fact that the 98% confidence interval does not overlap with the equivalence bounds of $-9$mm and $+9$mm and we can reject the presence of a clinically meaningful effect."}
+```{r tost-plot, fig.width=7, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.cap="Visual representation of the equivalence test. Plotted is the confidence interval for the mean difference between the two groups. Based on our choice for an $\alpha$ of `sig.level` the bold line visualizes  the 98% confidence interval used for the TOST approach, while the thin 99% confidence interval is used for the traditinal significance test against the null hypothesis of zero difference. The equivalence test is significant, which can be inferred from the fact that the 98% confidence interval does not overlap with the equivalence bounds of $-9$mm and $+9$mm and we can reject the presence of a clinically meaningful effect."}
 tost <- TOSTtwo.raw(mean(df[df$Group == "Meditation",]$DV),
                     mean(df[df$Group == "Waiting List",]$DV),
                     sd(df[df$Group == "Meditation",]$DV),
@@ -260,7 +260,7 @@ The first part is called a *prior distribution*:
 For each parameter we choose a probability distribution that describes expectations about possible parameter values. 
 This prior can be understood as our 'belief' before seeing the data (hence the *prior*).
 This terminology already highlights the distinction between the frequentist and the Bayesian understanding of probability:
-While frequentist consider 'probability' as a statement about long-term frequencies of events, Bayesians think of 'probability' as a 'degree of belief'.
+While frequentists consider 'probability' as a statement about long-term frequencies of events, Bayesians think of 'probability' as a 'degree of belief'.
 This subjective interpretation is easily explained -- and very intuitive to some -- but not without criticism.
 Even among Bayesians there is disagreement about the subjective nature of the prior.
 @Gelman2011 provides one accessible commentary on this debate.
@@ -301,7 +301,7 @@ In our imaginary study where we compare an 8-week meditation class to patients o
 This means that the `r (hdi.level)*100`% most credible values for the difference in means, given our model, which incorporates both the prior information and the observed data, lie between `r hdi['lower']`mm and `r hdi['upper']`mm.
 Figure \ref{fig:best-posterior-plot} visualizes this result.
 
-Differences between the confidence interval reported above and the Bayesian HDI are to be expected.
+Some differences between the confidence interval reported above and the Bayesian HDI are to be expected.
 The prior affects the width and location of the HDI in Bayesian estimation, and whenever the priors that are used for the model are not uniform, an HDI and a confidence interval will differ to a certain extent.
 With sufficient information from the observed data, the collected data will outweigh the prior, but with smaller amounts of data, it can be advisable to explore the impact of different priors on the inference.
 In the BEST model, the priors are not uniform but chosen to have minimal impact on the inferences, so even if the number of observations is relatively small, the prior should not have too much influence on the results.
@@ -320,7 +320,7 @@ Because the `r (hdi.level)*100`% HDI ($[`r hdi['lower']`; `r hdi['upper']`]$) li
 We do not, however, accept or reject any other specific value within the ROPE.
 In the vocabulary of Bayesian statistics, using a decision rule on a posterior distribution of a single model does not constitute "hypothesis testing".
 The term "Bayesian hypothesis testing" refers strictly to the use of Bayes factors for model selection, which we will discuss in the nect section.
-An alternative way to investigate the practical equivalence using the information contained in the posterior distribution, e.g. @Greenwald1975 recommends to investigate the probability mass contained in the ROPE [s. @Greenwald1975, p. 18].
+An alternative way to investigate practical equivalence using a Bayesian posterior distribution is to examine the probability mass contained in the ROPE [for details, see @Greenwald1975, p. 18].
 
 The Bayesian ROPE procedure is quite similar to equivalence tests, but there are several important dinstinctions. 
 In the Bayesian approach we can make statements about which values we believe are most credible, based on the data and the model, while in frequentist statistics we make dichotomous decisions based on long-run error rates. 
@@ -379,11 +379,11 @@ In the figure $M_0$ is represented by a point-null hypothesis and $M_1$ is repre
 
 A common criticism on Bayes factors is that they are much more sensitive to the specification of the prior than Bayesian model estimation. 
 While the data quickly overwhelms the prior in a Bayesian estimation framework (such as the ROPE procedure), the priors in a Bayes factor have much more weight.
-It is important to note, however, that priors have different purposes in the two applications:
+It is important to note, however, that priors have different purposes in the two approaches:
 In Bayesian models for estimation, the priors are used as a device for regularization and shrinkage of parameter estimates.
 This can be driven by subjective beliefs or statistical considerations (see discussion on subjective and objective use of priors above).
 For Bayes factors, on the other hand, priors should represent the predictions of a theory.
-Therefore, it is cautioned against the use of 'default' priors when calculating Bayes factors [see @Dienes2014], which are a compromise between general expectations about effect sizes and useful mathematical properties [e.g. @Rouder2009], but should only be chosen if they actually reflect a useful alternative model given the research question.
+Therefore, researchers have cautioned against the use of 'default' priors when calculating Bayes factors [see @Dienes2014], which are a compromise between general expectations about effect sizes and useful mathematical properties [e.g. @Rouder2009], but these default model specifications should only be chosen if they actually reflect a useful alternative model given the research question.
 Moreover, Bayes factors -- very much like $p$-values -- do not convey information about the magnitude of an effect or the uncertainty in its estimation.
 See @Kruschke2018b for additional criticisms on Bayes factors.
 
@@ -422,7 +422,7 @@ This ratio is called the *Savage-Dickey ratio* [@Wagenmakers2010].
 Although Bayes Factors can be interpreted as a continuous measure of model evidence, thresholds for interpreting Bayes factors have been proposed by @Jeffreys1961 which might be useful for researchers who begin to report and interpret Bayes factors. 
 A Bayes factor of 1 indicates the data are equally likely under both models. 
 Bayes factors between 1 and 3 constitute mere 'anecdotal' evidence, which is considered 'worth not more than a bare mentioning' [@Jeffreys1961, Appendix B]. 
-Thus, although the data support the null model over the alternative model specified by the prior, there is no good reason to conclude in favor of either model - at least if not either model is much more reasonable than the other *a priori* without respect to the data (this issue is extended on below).
+Thus, although the data support the null model over the alternative model specified by the prior, there is no good reason to conclude in favor of either model - at least if not either model is much more reasonable than the other *a priori* without respect to the data (we extend the discussion on prior belief in each model below).
 Stronger model evidence would be desirable, which means more data need to be collected [@Schonbrodt2015b].
 
 The difference between the result of the Bayes factor analysis, the equivalence test, and the ROPE procedure reported earlier has several reasons.
@@ -462,7 +462,7 @@ That is, if sampling and measurement error are large and the equivalence region 
 A phenomenon that has been termed 'bio-creep'.
 The prevalence of bio-creep is a matter of ongoing research;
 @Beryl2011 come to the conclusion, that it is not a major cause of concern in practice (at least on average).
-Awareness of the issue is nevertheless important and should even more underline the need for conducting direct replication studies, meta-analyses and the use of adequate statistical tools.
+Awareness of the issue is nevertheless important and should even more underline the need to carefully think about which effect sizes are deemed meaningful, beyond simply comparing the results of studies with each other.
 
 ## Possible Misconceptions
 Probability is not intuitive, and every statistical technique runs the risk of being misinterpreted.
@@ -471,7 +471,7 @@ When performing a null-hypothesis significance test, a non-significant result ca
 To conclude this, one has to specify and test against whichever effect one defines to be 'meaningful'.
 An equivalence test can be used to statistically *reject* effects as large or larger than the smallest effect size of interest, with a long-term error rate.
 It can *not* be used to conclude the effect is exactly 0, or to reject the presence of *any* effect.
-Even when the traditional significance is not significant while the equivalent is statistically significant (and we would know that we have not committed any Type II or Type I error respectively), it is still possible that there is a true effect - it might just be smaller than what was deemed meaningful when the study was designed and the Smallest Effect Size of Interest was chosen.
+If we conclude statistical equivalence, we can reject the presence of effect sizes more extreme than the smallest effect size of interest with a known error rate, but we can not conclude the true effect is exactly zero – there might be a true but small effect.
 For this reason, conclusions based on equivalence tests must always specify the equivalence bounds that are used, and it is recommended to combine equivalence tests with null-hypothesis significance tests (which can also help to identify effects that are significant *and* equivalent, or practically insignificant differences).
 Thus, a statement such as 'the difference was statistically equivalent to zero' is imprecise, and a more precise interpretation is 'we could reject effect sizes more extreme than the equivalence bounds of $-0.4$ and $0.4$'. 
 
