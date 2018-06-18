@@ -37,3 +37,4 @@ vignettes/*.pdf
 /Manuscript/*_files/*
 /Manuscript/Example_Data.csv
 /Preprint
+.Rproj.user

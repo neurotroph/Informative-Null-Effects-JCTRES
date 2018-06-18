@@ -58,11 +58,11 @@ t.test(DV ~ Group, data = df, alternative = "two.sided")
 
 # Analysis II: Equivalence Test ------------------------------------------------
 TOSTtwo.raw(mean(df[df$Group == "Meditation",]$DV),
-            mean(df[df$Group == "Waiting List",]$DV),
+            mean(df[df$Group == "Acupuncture",]$DV),
             sd(df[df$Group == "Meditation",]$DV),
-            sd(df[df$Group == "Waiting List",]$DV),
+            sd(df[df$Group == "Acupuncture",]$DV),
             length(df[df$Group == "Meditation",]$DV),
-            length(df[df$Group == "Meditation",]$DV),
+            length(df[df$Group == "Acupuncture",]$DV),
             # Equivalence Bounds
             low_eqbound = -9,
             high_eqbound = +9,
@@ -73,7 +73,7 @@ TOSTtwo.raw(mean(df[df$Group == "Meditation",]$DV),
 # Analysis III: Bayesian Estimation --------------------------------------------
 # Perform Bayesian estimation via Monte Carlo sampling
 best <- BESTmcmc(df[df$Group == "Meditation",]$DV,
-                 df[df$Group == "Waiting List",]$DV,
+                 df[df$Group == "Acupuncture",]$DV,
                  rnd.seed = 20180309, verbose = FALSE,
                  numSavedSteps = 1e4,
                  parallel = TRUE)
