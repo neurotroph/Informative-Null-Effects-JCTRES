@@ -238,8 +238,9 @@ Performing an equivalence test (again using Welch's $t$-test) on our fictional d
 The result is vizualized in Figure \ref{fig:tost-plot}, where the `r (1-sig.level*2)*100`% confidence interval is plotted and compared to the equivalence bounds of $-9\mathrm{mm}$ and $+9\mathrm{mm}$.
 The width of the confidence interval is $1 - 2\alpha$ since two one-sided tests are performed, both of which need to be significant to conclude equivalence [@Rogers1993].
 Using a Neyman-Pearson approach to statistical inferences, in which the goal is to make dichotomous decisions while controlling error rates at a desired level, we can *act* as if the difference between the two groups is smaller than the minimal clinically important difference of $\pm 9\mathrm{mm}$, without being wrong too often in the long run.
-It is important to note, that the confidence intervals here are only used to conduct the two one-sided tests (TOST).
-The interpretation of confidence intervals in a frequentist estimation frameworks has been critically discussed e.g. by @Morey2016.
+It is important to note, that the confidence intervals here are only used to check whether the `r (1-sig.level*2)*100`% confidence interval falls within the equivalence bounds.
+This is equivalent to performing the two one-sided tests (TOST) explained above.
+The interpretation of confidence intervals in a frequentist estimation framework has been critically discussed, e.g. by @Morey2016.
 
 The present example represents the case of a non-significant result that is equivalent to zero.
 It should be noted, that the equivalence testing approach also allows for significant *and* equivalent outcomes:
@@ -323,8 +324,8 @@ We do not, however, accept or reject any other specific value within the ROPE.
 In the vocabulary of Bayesian statistics, using a decision rule on a posterior distribution of a single model does not constitute "hypothesis testing".
 The term "Bayesian hypothesis testing" refers strictly to the use of Bayes factors for model selection, which we will discuss in the next section.
 An alternative way to investigate practical equivalence using a Bayesian posterior distribution would be to examine the probability mass contained in the ROPE [for details, see @Greenwald1975, p. 18].
-It is important to highlight, that the basis for inferences is the full posterior distribution.
-Thus, it is up to the researcher to decide whether they want to make a dichotomous decision about a single parameter value or rather make a probability statement (cf. Discussion section on inferential frameworks).
+It is important to highlight that the basis for inferences is the full posterior distribution.
+Thus, it is up to the researcher to decide whether they want to make a dichotomous decision about a single parameter value or rather make a probability statement (see Discussion).
 
 The Bayesian ROPE procedure is quite similar to equivalence tests, but there are several important dinstinctions.
 In the Bayesian approach we can make statements about which values we believe are most credible, based on the data and the model, while in frequentist statistics we make dichotomous decisions based on long-run error rates.
@@ -446,7 +447,7 @@ Since different researchers can have different beliefs about the prior odds of t
 If a researcher accepts the prior distributions for the parameters in the models compared in the Bayes factor, the Bayes factor contains the necessary information to update their own prior odds and make an inference -- but the Bayes factor is by itself not sufficient to reach a conclusion.
 Prior odds are a necessary part of the inferential method when using Bayes factors.
 
-```{r hypotheses-plot, echo=FALSE, fig.width=4, fig.height=6.2, fig.show="show", fig.cap="Illustration of the different hypotheses under investigation [adapted from @lakens_scheel_isager_2018]. **(A)** The classic two-sided significance testing aims to reject a point null hypothesis (here an effect size of exactly zero). **(B)** In equivalence test, the $H_0$ of no equivalence is tested (grey region), so the white area is the rejection region. **(C)** For the Bayesian estimation approach, the 95% highest density interval of the posterior is compared against the Region of Practical Equivalence (ROPE) between $\\Delta_L$ and $\\Delta_U$. **(D)** For the Bayes factor, two models are compared that differ in their prior distributions: The $M_0$ prior is a point mass of 1 at an effect size of 0, the alternative model $M_1$ is here plotted as a Normal distribution as an example. Note, that other alternative models can be used, e.g. centered on a value derived from theory or previous studies (cf. working example and Figure 4)."}
+```{r hypotheses-plot, echo=FALSE, fig.width=4, fig.height=6.2, fig.show="show", fig.cap="Illustration of the different hypotheses under investigation [adapted from @lakens_scheel_isager_2018]. **(A)** The classic two-sided significance testing aims to reject a point null hypothesis (here an effect size of exactly zero). **(B)** In equivalence test, the $H_0$ of no equivalence is tested (grey region), so the white area is the rejection region. **(C)** For the Bayesian estimation approach, the 95% highest density interval of the posterior is compared against the Region of Practical Equivalence (ROPE) between $\\Delta_L$ and $\\Delta_U$. **(D)** For the Bayes factor, two models are compared that differ in their prior distributions: The $M_0$ prior is a point mass of 1 at an effect size of 0, the alternative model $M_1$ is here plotted as a Normal distribution as an example. Note, that other alternative models can be used, e.g. centered on a value derived from theory or previous studies (see Figure 4)."}
 source("../R-scripts/Figures/Figure_Illustration_H0H1.R")
 ```
 
