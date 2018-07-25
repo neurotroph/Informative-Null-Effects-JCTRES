@@ -70,7 +70,7 @@ However, there are no statistical techniques that can unconditionally answer the
 As we will see below, statistical techniques that allow researchers to evaluate null results only allow conclusions about the null-hypothesis in relation to some specified alternative hypothesis.
 The null-hypothesis can not be statistically evaluated in complete isolation.
 Furthermore, it is impossible in empirical research to 'prove' a prediction, since theories and predictions are inherently probabilistic in an inductive empirical science.
-Rare events will happen, and thus the absence of an effect is always concluded based on a certain probability of making an error, or given a certain level of certainty.
+Rare events will happen, and thus the absence of an effect is always concluded based on a defined probability of making an error, or given a particular level of certainty.
 The aim of the present article is to give an overview of statistical methods suited to investigate 'null effects', and explain how to translate the statistical results from these methods into valid conclusions about the prediction that is tested.
 We provide a hypothetical example that is analyzed using four different methods, discuss how to interpret the results (as well as possible misinterpretations), and briefly explain which inferential frameworks these different methods are based on.
 
@@ -78,7 +78,7 @@ We provide a hypothetical example that is analyzed using four different methods,
 
 It is common practice in empirical research to rely almost exclusively on null-hypothesis significance testing (NHST) to investigate the presence of an effect.
 Because a null-hypothesis test can only reject the null (i.e. commonly the hypothesis of 'no effect'), it cannot be used to inform us about the absence of an effect in the population.
-When we observe a non-significant effect (e.g., $p > \alpha$, where $\alpha$ is the level of significance chosen ahead of data-collection), all we can conclude is that, assuming the true effect size in the population is zero, the observed data was not sufficiently different from zero to reject the null hypothesis without in the long run being wrong more often than a desired error rate.
+When we observe a non-significant effect (e.g., $p > \alpha$, where $\alpha$ is the level of significance chosen ahead of data-collection), all we can conclude is that, assuming the true effect size in the population is zero, the observed effect size was not sufficiently different from zero to reject the null hypothesis without in the long run being wrong more often than a desired error rate.
 This does not rule out the possibility that the true population effect size differs from zero.
 It is also possible that the experiment might have had relatively low power to detect the true effect size, or -- equivalently -- a high probability of making a Type 2 error (not rejecting the null-hypothesis when a true effect is present in the population).
 
@@ -153,7 +153,7 @@ ggplot(data = df, aes(x = Group, y = DV)) +
   theme_apa()
 ```
 
-For the imaginary study we simulated random samples using R from two independent normal distributions.^[The scripts for generating the simulated samples are included in the accompanying OSF repository.]
+For the imaginary study we simulated random samples using R from two independent normal distributions.^[The scripts for generating the simulated samples, including the chosen population parameters (which are usually unknown to the researcher), are included in the accompanying OSF repository.]
 The fictional measurements collected from `r n.group*2` participants are visualised in Figure \ref{fig:data-plot}.
 The mean change in self-reported lower back pain intensity on the 100mm VAS over the eight week period (and standard deviations) are $`r mean(df[df$Group == "Meditation",]$DV)`$ ($`r sd(df[df$Group == "Meditation",]$DV)`$) in the Meditation group and $`r mean(df[df$Group == "Waiting List",]$DV)`$ ($`r sd(df[df$Group == "Waiting List",]$DV)`$) in the control group.
 
@@ -220,7 +220,7 @@ An informative study should be designed to have sufficient power both (i) to det
 One way to test for equivalence is to perform the Two One-Sided Tests (TOST) procedure.
 A lower ($\Delta_{L}$) and upper ($\Delta_{U}$) equivalence bound is specified (e.g., a difference of -9mm or 9mm on a 100mm VAS).
 A first one-sided test is performed to examine whether we can reject effects *smaller* than $\Delta_{L} = -9\mathrm{mm}$, and a second one-sided test is performed to test whether we can reject effect *larger* than $\Delta_{U} = +9\mathrm{mm}$.
-If both one-sided tests are significant, we reject the presence of a difference more extreme than $\pm 9\mathrm{mm}$, and conclude the effect is statistically equivalent, given the equivalence bounds that were chosen.
+If both one-sided tests are significant, we reject the presence of a difference more extreme than $\pm 9\mathrm{mm}$, and conclude that the group difference is statistically equivalent to zero, given the equivalence bounds that were chosen.
 
 ```{r tost-plot, fig.width=7, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.cap="Visual representation of the equivalence test. Plotted is the confidence interval for the mean difference between the two groups. Based on our choice for an $\\alpha$ of `sig.level` the bold line visualizes  the 98% confidence interval used for the TOST approach, while the thin 99% confidence interval is used for the traditinal significance test against the null hypothesis of zero difference. The equivalence test is significant, which can be inferred from the fact that the 98% confidence interval does not overlap with the equivalence bounds of $-9$mm and $+9$mm and we can reject the presence of a clinically meaningful effect."}
 tost <- TOSTtwo.raw(mean(df[df$Group == "Meditation",]$DV),
@@ -238,6 +238,9 @@ Performing an equivalence test (again using Welch's $t$-test) on our fictional d
 The result is vizualized in Figure \ref{fig:tost-plot}, where the `r (1-sig.level*2)*100`% confidence interval is plotted and compared to the equivalence bounds of $-9\mathrm{mm}$ and $+9\mathrm{mm}$.
 The width of the confidence interval is $1 - 2\alpha$ since two one-sided tests are performed, both of which need to be significant to conclude equivalence [@Rogers1993].
 Using a Neyman-Pearson approach to statistical inferences, in which the goal is to make dichotomous decisions while controlling error rates at a desired level, we can *act* as if the difference between the two groups is smaller than the minimal clinically important difference of $\pm 9\mathrm{mm}$, without being wrong too often in the long run.
+It is important to note, that the confidence intervals here are only used to check whether the `r (1-sig.level*2)*100`% confidence interval falls within the equivalence bounds.
+This is equivalent to performing the two one-sided tests (TOST) explained above.
+The interpretation of confidence intervals in a frequentist estimation framework has been critically discussed, e.g. by @Morey2016.
 
 The present example represents the case of a non-significant result that is equivalent to zero.
 It should be noted, that the equivalence testing approach also allows for significant *and* equivalent outcomes:
@@ -304,7 +307,7 @@ Figure \ref{fig:best-posterior-plot} visualizes this result.
 Some differences between the confidence interval reported above and the Bayesian HDI are to be expected.
 The prior affects the width and location of the HDI in Bayesian estimation, and whenever the priors that are used for the model are not uniform, an HDI and a confidence interval will differ to a certain extent.
 With sufficient information from the observed data, the collected data will outweigh the prior, but with smaller amounts of data, it can be advisable to explore the impact of different priors on the inference.
-In the BEST model, the priors are not uniform but chosen to have minimal impact on the inferences, so even if the number of observations is relatively small, the prior should not have too much influence on the results.
+In the BEST model, the priors are not uniform but chosen to have minimal impact on the inferences, so even if the number of observations is relatively small, the prior should not have too much influence on the results [see @Kruschke2013 for technical details].
 
 The posterior distribution can be used to answer several other questions as well.
 Besides the HDI, we can find the most credible value for the difference between the two groups, which would be the posterior mode, or *Maximum A Posteriori estimate* (MAP), which is `r posterior.mode` (and differs slighty from the frequentist estimate of the difference due to the prior).
@@ -319,8 +322,10 @@ By comparing the `r (hdi.level)*100`% HDI with the region of practical equivalen
 Because the `r (hdi.level)*100`% HDI ($[`r hdi['lower']`; `r hdi['upper']`]$) lies well within those bounds (as can be seen in Figure \ref{fig:best-posterior-plot}), we declare a difference of exactly zero to be accepted for practical purposes based on the decision rule above.
 We do not, however, accept or reject any other specific value within the ROPE.
 In the vocabulary of Bayesian statistics, using a decision rule on a posterior distribution of a single model does not constitute "hypothesis testing".
-The term "Bayesian hypothesis testing" refers strictly to the use of Bayes factors for model selection, which we will discuss in the nect section.
-An alternative way to investigate practical equivalence using a Bayesian posterior distribution is to examine the probability mass contained in the ROPE [for details, see @Greenwald1975, p. 18].
+The term "Bayesian hypothesis testing" refers strictly to the use of Bayes factors for model selection, which we will discuss in the next section.
+An alternative way to investigate practical equivalence using a Bayesian posterior distribution would be to examine the probability mass contained in the ROPE [for details, see @Greenwald1975, p. 18].
+It is important to highlight that the basis for inferences is the full posterior distribution.
+Thus, it is up to the researcher to decide whether they want to make a dichotomous decision about a single parameter value or rather make a probability statement (see Discussion).
 
 The Bayesian ROPE procedure is quite similar to equivalence tests, but there are several important dinstinctions.
 In the Bayesian approach we can make statements about which values we believe are most credible, based on the data and the model, while in frequentist statistics we make dichotomous decisions based on long-run error rates.
@@ -442,7 +447,7 @@ Since different researchers can have different beliefs about the prior odds of t
 If a researcher accepts the prior distributions for the parameters in the models compared in the Bayes factor, the Bayes factor contains the necessary information to update their own prior odds and make an inference -- but the Bayes factor is by itself not sufficient to reach a conclusion.
 Prior odds are a necessary part of the inferential method when using Bayes factors.
 
-```{r hypotheses-plot, echo=FALSE, fig.width=4, fig.height=6.2, fig.show="show", fig.cap="Illustration of the different hypotheses under investigation [adapted from @lakens_scheel_isager_2018]. **(A)** The classic two-sided significance testing aims to reject a point null hypothesis (here an effect size of exactly zero). **(B)** In equivalence test, the $H_0$ of no equivalence is tested (grey region), so the white area is the rejection region. **(C)** For the Bayesian estimation approach, the 95% highest density interval of the posterior is compared against the Region of Practical Equivalence (ROPE) between $\\Delta_L$ and $\\Delta_U$. **(D)** For the Bayes factor, two models are compared that differ in their prior distributions: The $M_0$ prior is a point mass of 1 at an effect size of 0, the alternative model $M_1$ is here plotted as a Normal distribution as an example."}
+```{r hypotheses-plot, echo=FALSE, fig.width=4, fig.height=6.2, fig.show="show", fig.cap="Illustration of the different hypotheses under investigation [adapted from @lakens_scheel_isager_2018]. **(A)** The classic two-sided significance testing aims to reject a point null hypothesis (here an effect size of exactly zero). **(B)** In equivalence test, the $H_0$ of no equivalence is tested (grey region), so the white area is the rejection region. **(C)** For the Bayesian estimation approach, the 95% highest density interval of the posterior is compared against the Region of Practical Equivalence (ROPE) between $\\Delta_L$ and $\\Delta_U$. **(D)** For the Bayes factor, two models are compared that differ in their prior distributions: The $M_0$ prior is a point mass of 1 at an effect size of 0, the alternative model $M_1$ is here plotted as a Normal distribution as an example. Note, that other alternative models can be used, e.g. centered on a value derived from theory or previous studies (see Figure 4)."}
 source("../R-scripts/Figures/Figure_Illustration_H0H1.R")
 ```
 
