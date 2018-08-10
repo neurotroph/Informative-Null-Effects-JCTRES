@@ -13,15 +13,16 @@ author:
 
 affiliation:
   - id            : "1"
-    institution   : "University of Bonn, Germany"
+    institution   : "Department of Psychology, University of Bonn, Germany"
   - id            : "2"
-    institution   : "Eindhoven University of Technology, Eindhoven, the Netherlands"
+    institution   : "Human Technology Interaction Group, Eindhoven University of Technology, Eindhoven, the Netherlands"
 
 author_note: |
   All data for the example study, along with analysis scripts for R [@R-Base], JASP [@JASP2018], and jamovi [@jamovi08], and the scripts used to create this manuscript and the figures in it are available at https://osf.io/wptju/.
 
 abstract: |
   Being able to interpret 'null effects' is important for cumulative knowledge generation in science. To draw informative conclusions from null-effects, researchers need to move beyond the incorrect interpretation of a non-significant result in a null-hypothesis significance test as evidence of the absence of an effect. We explain how to statistically evaluate null-results using equivalence tests, Bayesian estimation, and Bayes factors. A worked example demonstrates how to apply these statistical tools and interpret the results. Finally, we explain how no statistical approach can actually prove that the null-hypothesis is true, and briefly discuss the philosophical differences between statistical approaches to examine null-effects. The increasing availability of easy-to-use software and online tools to perform equivalence tests, Bayesian estimation, and calculate Bayes factors make it timely and feasible to complement or move beyond traditional null-hypothesis tests, and allow researchers to draw more informative conclusions about null-effects.
+  **Relevance for Patients:** Conclusions based on clinical trial data often focus on demonstrating differences due to treatments, despite demonstrating the absence of differences is an equally important statistical question. Researchers commonly conclude the absence of an effect based on the incorrect use of traditional statistical methods. By providing an accessible overview of different approaches to exploring null-results, we hope researchers improve their statistical inferences. This should lead to a more accurate interpretation of studies, and facilitate knowledge generation about proposed treatments.
 
 keywords          : "equivalence testing, hypothesis, bayes factors, bayesian estimation"
 wordcount         : ""
@@ -32,11 +33,14 @@ figsintext        : yes
 figurelist        : no
 tablelist         : no
 footnotelist      : no
-lineno            : yes
+lineno            : no
 mask              : no
 
 class             : "man"
-output            : papaja::apa6_pdf
+output            :
+  papaja::apa6_pdf
+csl               : vancouver-brackets.csl
+  
 ---
 
 ```{r load_packages, include=FALSE}
@@ -240,7 +244,7 @@ The width of the confidence interval is $1 - 2\alpha$ since two one-sided tests 
 Using a Neyman-Pearson approach to statistical inferences, in which the goal is to make dichotomous decisions while controlling error rates at a desired level, we can *act* as if the difference between the two groups is smaller than the minimal clinically important difference of $\pm 9\mathrm{mm}$, without being wrong too often in the long run.
 It is important to note, that the confidence intervals here are only used to check whether the `r (1-sig.level*2)*100`% confidence interval falls within the equivalence bounds.
 This is equivalent to performing the two one-sided tests (TOST) explained above.
-The interpretation of confidence intervals in a frequentist estimation framework has been critically discussed, e.g. by @Morey2016.
+The interpretation of confidence intervals in a frequentist estimation framework has been critically discussed, e.g. by @Morey2016b.
 
 The present example represents the case of a non-significant result that is equivalent to zero.
 It should be noted, that the equivalence testing approach also allows for significant *and* equivalent outcomes:
@@ -537,9 +541,11 @@ The general idea for the manuscript was jointly developed by CH and DL. CH draft
 DL provided critical comments and extended the discussion section.
 CH and DL collaboratively revised the manuscript for final submission.
 
+# Acknowledgements
+This work was in part funded by VIDI Grant 452-17-013 from the Netherlands Organisation for Scientific Research.
+
 \newpage
 
 # References
-
 \setlength{\parindent}{-0.5in}
 \setlength{\leftskip}{0.5in}
